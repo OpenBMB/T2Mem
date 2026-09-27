@@ -1,16 +1,32 @@
 <div align="center">
 
-# T2Mem: Test-Time Memory Construction
+<h1> Test-Time Memory Construction
+</h1>
 
-[![Code](https://img.shields.io/badge/Code-T2Mem-181717?logo=github&logoColor=white)](https://github.com/OpenBMB/T2Mem)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](requirements.txt)
-[![License](https://img.shields.io/badge/License-MIT-22863A)](LICENSE)
-[![LoCoMo](https://img.shields.io/badge/Benchmark-LoCoMo-7B61FF)](https://github.com/snap-research/locomo)
-[![LongMemEval](https://img.shields.io/badge/Benchmark-LongMemEval-0078D4)](https://github.com/xiaowu0162/LongMemEval)
+<h5 align="center">
+<a href='https://arxiv.org/abs/xxxx.xxxxx'><img src='https://img.shields.io/badge/Paper-T2Mem-red?logo=arxiv&logoColor=white'></a>
+<a href='requirements.txt'><img src='https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white'></a>
+<a href='LICENSE'><img src='https://img.shields.io/badge/License-MIT-22863A'></a>
+<a href='https://github.com/snap-research/locomo'><img src='https://img.shields.io/badge/Benchmark-LoCoMo-7B61FF'></a>
+<a href='https://github.com/xiaowu0162/LongMemEval'><img src='https://img.shields.io/badge/Benchmark-LongMemEval-0078D4'></a>
+</h5>
 
+<p align="center">Zijun Wang<sup>1*</sup>, Yifan Ji<sup>1*</sup>, Haidong Xin<sup>1</sup>, Zhenghao Liu<sup>1†</sup>, Yukun Yan<sup>2</sup>, Zulong Chen<sup>3</sup>, Yu Gu<sup>1</sup>, Ge Yu<sup>1</sup>, Maosong Sun<sup>2</sup></p>
+
+<p align="center"><sup>1</sup>Northeastern University, <sup>2</sup>Tsinghua University, <sup>3</sup>Alibaba Group</p>
+
+<p align="center"><sup>*</sup> Equal contribution. <sup>†</sup> Corresponding author.</p>
 </div>
 
-## 1. Install
+## 📖 Introduction
+
+T $^2$ Mem enables LLMs to reason over long interaction histories by deferring memory construction to test time. It extracts lightweight episode-level metadata offline, then adaptively retrieves and organizes metadata and raw interactions to progressively build query-specific memory as reasoning unfolds. T $^2$ Mem consistently outperforms strong baselines on LoCoMo and LongMemEval across different backbone LLMs while substantially reducing memory construction overhead.
+
+![](figs/model.png)
+
+## ⚙️ Setup
+
+### 1. Create Python Environment
 
 Use Python **3.10 or newer**.
 
@@ -22,7 +38,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-## 2. Configure APIs
+### 2. Configure APIs
 
 ```bash
 cp .env.example .env
@@ -30,7 +46,7 @@ cp .env.example .env
 
 Edit `.env` with the endpoints, API keys, and served model names for the **LLM**, **embedding model**, and **evaluation judge**. All three use OpenAI-compatible APIs. `run.py` loads `.env` automatically.
 
-## 3. Prepare data
+### 3. Prepare data
 
 Download either or both datasets and place the files in `data/`:
 
@@ -45,7 +61,9 @@ data/
 └── longmemeval_s_cleaned.json
 ```
 
-## 4. Run
+## 🔧 Reproduction Guide
+
+### 1. Run
 
 Check the configuration, then run all datasets found in `data/`:
 
@@ -68,8 +86,16 @@ python run.py locomo --stage evaluate
 
 Replace `locomo` with `longmemeval` for LongMemEval.
 
-## 5. View outputs
+### 2. View outputs
 
 - `outputs/`: model predictions.
 - `eval-results/`: judgments and accuracy summaries.
 - `data/`: processed data, indexes, and retrieval files.
+
+## 📧 Contact
+
+For questions, suggestions, or bug reports, please contact:
+
+```
+xinhaidong@stumail.neu.edu.cn
+```
