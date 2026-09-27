@@ -10,26 +10,30 @@ Code and experiments for **Test-Time Memory Construction**.
 [![LoCoMo](https://img.shields.io/badge/Benchmark-LoCoMo-7B61FF)](https://github.com/snap-research/locomo)
 [![LongMemEval](https://img.shields.io/badge/Benchmark-LongMemEval-0078D4)](https://github.com/xiaowu0162/LongMemEval)
 
-[Overview](#overview) · [Installation](#installation) · [Data](#data) · [Experiments](#experiments) · [Evaluation](#evaluation) · [Outputs](#outputs)
+[Overview](#overview) · [Installation](#installation) · [Data](#data) · [Experiments](#experiments) · [Evaluation](#evaluation) · [Results](#results) · [Outputs](#outputs)
 
 </div>
 
 ## Overview
 
-**T2Mem** constructs query-relevant memory at test time from long conversation histories. Episode indexes provide lightweight descriptions of conversation sessions. Given a question, a controller iteratively searches candidate episodes, reads session content, and accumulates evidence for a separate answer-generation stage.
+**T2Mem** is a test-time memory construction framework for long-term conversational question answering. Offline, it extracts lightweight **episode-level metadata** containing key events, facts, entities, and temporal cues, with source links to the raw interaction sessions. At test time, reasoning and memory construction are interleaved: the model distills each observation into a memory cache, appends it to the accumulated memory, and decides which information to access next.
 
-Experiments cover **LoCoMo** and **LongMemEval**, with structured episode indexes, summary indexes, and reading-mode ablations.
+`SearchMeta` retrieves previously unseen metadata; `ReadRaw` follows a metadata entry's source link to recover fine-grained evidence. The process stops with `Answer` or at the construction-step limit, and a separate answer stage uses the query and accumulated memory. Experiments cover **LoCoMo** and **LongMemEval**.
 
 ```mermaid
 flowchart LR
-    H[Conversation histories] --> I[Episode indexes]
-    I --> R[Candidate retrieval]
-    Q[Question] --> R
-    R --> M[Test-time memory construction]
-    H --> M
-    M --> E[Accumulated evidence]
-    E --> A[Answer generation]
-    A --> J[Benchmark evaluation]
+    H[Raw interaction sessions] --> I[Episode-level metadata]
+    I --> O[Initial top-5 metadata]
+    Q[Question] --> O
+    O --> C[Reasoning and memory construction]
+    C --> T[SearchMeta / ReadRaw]
+    I --> T
+    H --> T
+    T --> C
+    C --> M[Accumulated memory caches]
+    M --> C
+    M --> A[Answer generation]
+    Q --> A
 ```
 
 ## Installation
@@ -80,10 +84,10 @@ The full pipeline requires LLM, embedding, and judge configuration. Use `--skip-
 
 Download the raw benchmark files from their official releases and place either or both in `data/`:
 
-| Benchmark | Dataset | Filename |
-|---|---|---|
-| LoCoMo | [Official data](https://github.com/snap-research/locomo/tree/main/data) | `locomo10.json` |
-| LongMemEval | [Cleaned dataset](https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned) | `longmemeval_s_cleaned.json` |
+| Benchmark | Dataset | Filename | Evaluation questions in the paper |
+|---|---|---|---|
+| LoCoMo | [Official data](https://github.com/snap-research/locomo/tree/main/data) | `locomo10.json` | 1,540, excluding adversarial questions |
+| LongMemEval | [Cleaned dataset](https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned) | `longmemeval_s_cleaned.json` | 500 |
 
 ```text
 data/
@@ -95,26 +99,42 @@ Files in `data/raw/` are also recognized. LongMemEval additionally supports `lon
 
 ## Experiments
 
+### Main experiment settings
+
+| Component | Setting in the paper |
+|---|---|
+| Backbone LLMs | Qwen3.5-27B; Gemma4-31B-Instruct |
+| Metadata retrieval | BGE-M3 |
+| Evaluation judge | Qwen3.5-Plus |
+| Initial observation | 5 metadata entries |
+| Subsequent `SearchMeta` calls | 1 previously unseen entry per call |
+| Maximum construction steps | 5 |
+| Generation | Temperature 0.0; top-p 0.95; sampling top-k 20 |
+| Maximum answer length | 1,024 tokens |
+| Model serving | vLLM |
+
+Set `T2MEM_LLM_MODEL_NAME` to the corresponding served backbone alias, use BGE-M3 for embeddings, and configure the Qwen3.5-Plus judge in `.env`. Sampling top-k is a generation parameter, separate from retrieval candidate counts. The paper-matched stage commands and endpoint settings are in [docs/experiments.md](docs/experiments.md#paper-experiment-settings).
+
 ### End-to-end reproduction
 
 Validate the configuration and inputs, then run all datasets found in `data/`:
 
 ```bash
-python run.py --check
-python run.py
+python run.py --check --temperature 0.0 --answer-max-tokens 1024
+python run.py --temperature 0.0 --answer-max-tokens 1024
 ```
 
 The pipeline executes **preprocessing → index construction → retrieval → memory construction and answer generation → evaluation**. Select a benchmark explicitly with:
 
 ```bash
-python run.py locomo
-python run.py longmemeval
+python run.py locomo --temperature 0.0 --answer-max-tokens 1024
+python run.py longmemeval --temperature 0.0 --answer-max-tokens 1024
 ```
 
 To generate predictions without evaluation:
 
 ```bash
-python run.py locomo --skip-eval
+python run.py locomo --skip-eval --temperature 0.0 --answer-max-tokens 1024
 ```
 
 Raw datasets are read only. Each stage creates its output directory and verifies its artifacts. Repeating a stage overwrites its generated files. Failed stages return a nonzero exit status and report the artifact or log path.
@@ -123,7 +143,7 @@ Raw datasets are read only. Each stage creates its output directory and verifies
 
 ```bash
 python run.py locomo --stage preprocess
-python run.py locomo --stage index
+python run.py locomo --stage index --temperature 0.0
 python run.py locomo --stage retrieve
 python run.py locomo --stage infer
 python run.py locomo --stage evaluate
@@ -139,24 +159,24 @@ python run.py longmemeval --stage preprocess --data-path data/my_longmemeval.jso
 
 ### Ablations
 
-| Setting | Option | Scope |
+| Paper variant / setting | Option | Scope |
 |---|---|---|
-| Structured episode indexes | `--variant structured` | Both benchmarks; default |
-| Summary indexes | `--variant summary` | Both benchmarks; `full` reading mode |
-| Index and raw-session reading | `--read-mode full` | Structured indexes; default |
-| Index-only reading | `--read-mode wiki-only` | Structured indexes |
-| Raw-session reading | `--read-mode raw-only` | Structured indexes |
+| T2Mem metadata representation | `--variant structured` | Both benchmarks; default |
+| T2Mem (Summary) | `--variant summary` | Both benchmarks; `full` reading mode |
+| T2Mem | `--read-mode full` | Structured metadata; default |
+| w/o Rawdata | `--read-mode wiki-only` | Structured metadata |
+| w/o Metadata | `--read-mode raw-only` | Raw-session retrieval and reading |
 | Controller output budget | `--output-budget-tokens` | Structured LoCoMo |
 | Controller reasoning budget | `--reasoning-budget` | Structured LoCoMo |
 
 ```bash
 python run.py locomo --read-mode wiki-only
 python run.py locomo --read-mode raw-only
-python run.py longmemeval --variant summary
+python run.py longmemeval --variant summary --temperature 0.0 --answer-max-tokens 1024
 python run.py locomo --output-budget-tokens 400 --dump-prompts
 ```
 
-The reading-mode experiments select the matching retrieval representation. `raw-only` also requires the structured index file.
+The reading-mode experiments select the matching retrieval representation. `raw-only` also requires the structured index file at initialization. T2Mem (Graph) and w/o Rollout Construction, reported in the paper, do not have entry points in this repository. The controller budget options are described separately from the paper's token-budget analysis in [docs/experiments.md](docs/experiments.md#token-budget-analysis).
 
 ### Reproduction parameters
 
@@ -165,6 +185,8 @@ The reading-mode experiments select the matching retrieval representation. `raw-
 | `--retrieval-top-k` | `10` | Ranked candidates per question |
 | `--top-k` | `5` | Candidates in the initial controller observation |
 | `--max-steps` | `5` | Maximum controller rounds |
+| `--temperature` | Stage defaults | Generation temperature; use `0.0` for paper settings |
+| `--answer-max-tokens` | `1024`; summary LoCoMo: `512` | Final answer cap; use `1024` for paper settings |
 | `--workers` | `8` | Concurrent indexing, inference, or judge requests |
 | `--embed-backend` | `api` | API or local embeddings |
 | `--limit` | All questions | Query limit for inference and evaluation |
@@ -195,6 +217,15 @@ Judgments and accuracy summaries are written to `eval-results/`.
 - **LongMemEval:** evaluation uses task-specific judge prompts and abstention handling. The accuracy denominator includes submitted rows, including invalid or failed judgments.
 
 Inspect error counts and invalid judgments before reporting accuracy. The pipeline treats judge errors and invalid responses as stage failures. Evaluation conventions are detailed in [docs/experiments.md](docs/experiments.md#evaluation-conventions).
+
+## Results
+
+T2Mem accuracy (%) reported in Tables 1 and 2 of the paper:
+
+| Backbone | LoCoMo | LongMemEval |
+|---|---|---|
+| Qwen3.5-27B | 71.69 | 84.80 |
+| Gemma4-31B-Instruct | 71.30 | 85.20 |
 
 ## Outputs
 

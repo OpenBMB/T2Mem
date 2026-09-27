@@ -19,18 +19,30 @@ python run.py longmemeval --stage preprocess
 
 Keep the downloaded version or checksum with your experiment record. The repository's MIT license does not replace the benchmark's data terms.
 
+The paper evaluates the cleaned LongMemEval S split and excludes LoCoMo's adversarial category. Table 4 reports the following evaluation counts:
+
+| LoCoMo category | Questions | LongMemEval category | Questions |
+|---|---|---|---|
+| Single-Hop | 841 | Single-Session User | 70 |
+| Multi-Hop | 282 | Single-Session Assistant | 56 |
+| Temporal | 321 | Single-Session Preference | 30 |
+| Open Domain | 96 | Multi-Session | 133 |
+| — | — | Knowledge-Update | 78 |
+| — | — | Temporal-Reasoning | 133 |
+| **Total** | **1,540** | **Total** | **500** |
+
 Put `locomo10.json` and/or `longmemeval_s_cleaned.json` directly in `data/`. After installing `requirements.txt` and configuring `.env`, run:
 
 ```bash
-python run.py --check
-python run.py
+python run.py --check --temperature 0.0 --answer-max-tokens 1024
+python run.py --temperature 0.0 --answer-max-tokens 1024
 ```
 
 The runner discovers available datasets and creates derived files automatically. Files in `data/raw/` are also recognized. If multiple raw files match one benchmark, select one with `--data-path`. Raw inputs remain unchanged; repeating a stage replaces its generated outputs.
 
 ```bash
 python run.py locomo --stage preprocess
-python run.py locomo --stage index
+python run.py locomo --stage index --temperature 0.0
 python run.py locomo --stage retrieve
 python run.py locomo --stage infer
 python run.py locomo --stage evaluate
