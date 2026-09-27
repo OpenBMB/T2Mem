@@ -26,7 +26,7 @@ python run.py --check
 python run.py
 ```
 
-The runner discovers available datasets and creates derived files automatically. The existing `data/raw/` location also works. If multiple raw files match one benchmark, select one with `--data-path`. Raw inputs remain unchanged; repeating a stage replaces its generated outputs.
+The runner discovers available datasets and creates derived files automatically. Files in `data/raw/` are also recognized. If multiple raw files match one benchmark, select one with `--data-path`. Raw inputs remain unchanged; repeating a stage replaces its generated outputs.
 
 ```bash
 python run.py locomo --stage preprocess
@@ -37,7 +37,7 @@ python run.py locomo --stage evaluate
 ```
 
 Use `longmemeval` for the other benchmark. Use `--data-dir` or `DATA_ROOT` to change
-the unified runner's data directory. The legacy shell runners also accept
+the unified runner's data directory. The shell runners also accept
 individual `DATA` / `WIKI_ROOT` / `RETRIEVAL` / `WIKI` overrides.
 
 ```
@@ -77,7 +77,7 @@ Each session needs `wiki_id`, `source_session_id`, `date_time` and `transcript_t
 Queries come from the retrieval file rather than the dataset, so every retrieval row must
 carry `sample_id`, `query_id`, `question`, `answer`, `category` and `topk_sessions`.
 
-Rows with `category == 5` are skipped by the LoCoMo readers and judge, preserving the supplied experiment scope.
+Rows with `category == 5` are excluded by the LoCoMo readers and judge.
 
 ### LongMemEval — `longmemeval_processed.json`
 

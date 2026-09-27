@@ -34,7 +34,7 @@ Repeated stages replace their generated outputs; prior files are not silently re
 | Summary LoCoMo | `full` only | No | No | No | No |
 | Summary LongMemEval | `full` only | No | No | No | No |
 
-Each benchmark keeps its original controller and answer prompts. Unsupported flags fail in the Python argument parser; runner combinations are also checked before launching work.
+Controller and answer prompts are benchmark-specific. Unsupported parameter combinations are rejected before execution.
 
 ## Memory format
 
@@ -43,7 +43,7 @@ Each benchmark keeps its original controller and answer prompts. Unsupported fla
 | `structured` (default) | `wiki/build_wiki.py` | `t2mem/t2mem_answer.py` | `<dataset>_wiki.jsonl` | `<dataset>_retrieval_wiki.jsonl` |
 | `summary` | `wiki/build_summary_wiki.py` | `t2mem/t2mem_summary_answer.py` | `<dataset>_summary_wiki.jsonl` | `<dataset>_retrieval_summary_wiki.jsonl` |
 
-Summary entries contain a single natural-language summary per session. Their reader uses the existing full controller action set; the runner requires `full` rather than silently ignoring a different read mode.
+Summary entries contain a single natural-language summary per session. Their reader uses the full controller action set and requires `--read-mode full`.
 
 ## Structured reading modes
 
@@ -59,15 +59,15 @@ Wiki and raw candidates are ranked using different representations. Comparing th
 
 ## Embedding backends
 
-API and local backends support structured indexes, summary indexes, and raw sessions on both benchmarks. The benchmark-specific text representations and ranking formulas remain unchanged.
+API and local backends support structured indexes, summary indexes, and raw sessions on both benchmarks. Retrieval uses benchmark-specific text representations and normalized embedding similarity.
 
 `run.py` defaults to API embeddings. Configure the embedding endpoint, served model, and key in `.env`; only `requirements.txt` is needed. Local embeddings require `requirements-local.txt` and a sentence-transformers model directory or ID in `T2MEM_EMBEDDING_MODEL`.
 
-Legacy shell runners preserve their defaults: API for structured LoCoMo wiki retrieval, local otherwise. Set `EMBED_BACKEND` explicitly; the example `.env` selects API.
+Shell runners default to: API for structured LoCoMo wiki retrieval, local otherwise. Set `EMBED_BACKEND` explicitly; the example `.env` selects API.
 
-## Legacy shell runner configuration
+## Shell runner configuration
 
-The original `scripts/*.sh` runners remain available. Export `.env` first with `set -a; source .env; set +a`. All shell runners accept additional Python CLI arguments after their positional arguments. Use the relevant Python entry point's `--help` for its complete flag list. Extra CLI flags override flags supplied earlier by the runner.
+The `scripts/*.sh` entry points run individual experiment stages. Export `.env` first with `set -a; source .env; set +a`. All shell runners accept additional Python CLI arguments after their positional arguments. Use the relevant Python entry point's `--help` for its complete flag list. Extra CLI flags override flags supplied earlier by the runner.
 
 | Variable | Default / purpose |
 |---|---|
@@ -106,9 +106,9 @@ Direct Python entry points also accept `T2MEM_LOCOMO_DATA`, `T2MEM_LME_DATA`, `T
 | `--reasoning-budget` | Unlimited reasoning words | Structured LoCoMo |
 | `--dump-prompts` | Disabled | Structured LoCoMo |
 
-The LoCoMo controller-output budget gates each call with `min_call_tokens = 50` and `answer_reserve = 0`. A budget below 50 cannot fund the first controller call. If no evidence is produced or truncated output cannot be parsed, the existing fallback uses the initial retrieved wiki snippets. Answer tokens are outside this controller budget. Different endpoints may report token usage differently; inspect the recorded usage and stop reason.
+The LoCoMo controller-output budget gates each call with `min_call_tokens = 50` and `answer_reserve = 0`. A budget below 50 cannot fund the first controller call. If no evidence is produced or truncated output cannot be parsed, the fallback uses the initial retrieved wiki snippets. Answer tokens are outside this controller budget. Different endpoints may report token usage differently; inspect the recorded usage and stop reason.
 
-Example sweep (the numbers are settings, not reproduced result claims):
+Controller-output-budget sweep:
 
 ```bash
 for budget in 50 100 200 400 800 1200; do
@@ -131,15 +131,9 @@ Preserve model versions, dataset versions, endpoint settings, index artifacts, e
 
 ## Evaluation conventions
 
-- LoCoMo category 5 is excluded by its readers and judge, preserving the supplied experiment scope.
-- LoCoMo's adapter now retains failed prediction rows by default as empty responses. The adapter's explicit `--skip-errors` option remains available for reproducing previously filtered evaluations; the evaluation runner does not enable it.
+- LoCoMo category 5 is excluded by its readers and judge.
+- The LoCoMo adapter represents failed predictions as empty responses. `--skip-errors` excludes those rows when explicitly requested; the pipeline does not enable this option.
 - LoCoMo overall `accuracy` is computed over successful judge responses. Its category accuracy includes judge-error rows in the denominator. Inspect `total_rows`, `judged_rows`, and `error_rows` before reporting results.
-- LongMemEval preserves its task-specific judge prompts and abstention handling. Its accuracy denominator includes submitted rows, including invalid or failed judgments; inspect those counts.
+- LongMemEval uses task-specific judge prompts and abstention handling. Its accuracy denominator includes submitted rows, including invalid or failed judgments; inspect those counts.
 - Neither evaluator reconstructs missing queries. Supply the full prediction file for a full benchmark evaluation, and report any limits or missing rows.
-- These are the LLM-judge conventions in the supplied experiment code. They should not be presented as an independent implementation of every upstream benchmark metric.
-
-## Changes from the supplied snapshot
-
-The method is consistently named **T2Mem** in paths, imports, function names, environment variables, and output filenames. Deployment-specific defaults were removed from the summary branches. Runner paths now match index/retrieval filenames, summary entry points receive only supported arguments, and retrieval receives the selected wiki path. The local environment includes NumPy. Both API and local embedding backends now support all benchmark representations. The LoCoMo adapter no longer silently filters failed predictions during evaluation.
-
-The original input formats, active benchmark prompts, controller actions, candidate ranking formulas, evidence accumulation, and answer-generation logic are retained. An original snapshot was backed up locally before organizing this repository.
+- The reported metrics use the LLM-judge conventions described above.
