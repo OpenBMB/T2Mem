@@ -85,6 +85,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--workers", type=positive_int)
     parser.add_argument("--max-steps", type=positive_int)
     parser.add_argument(
+        "--temperature",
+        type=float,
+        help="generation temperature for indexing, inference, and evaluation",
+    )
+    parser.add_argument(
         "--limit", type=positive_int, help="inference/evaluation query limit"
     )
     parser.add_argument("--output-budget-tokens", type=nonnegative_int)
@@ -102,6 +107,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="validate configuration and inputs without model calls",
     )
     args = parser.parse_args(argv)
+    if args.temperature is not None and (
+        not math.isfinite(args.temperature) or args.temperature < 0
+    ):
+        parser.error("--temperature must be a nonnegative finite number")
     if args.data_path and not args.dataset:
         parser.error("--data-path requires locomo or longmemeval")
     if args.predictions and (args.stage != "evaluate" or not args.dataset):
@@ -533,6 +542,8 @@ class Experiment:
                 flags += ["--data-path", str(self.processed)]
             if args.limit:
                 flags += ["--limit", str(args.limit)]
+        if args.temperature is not None and stage in ("index", "infer", "evaluate"):
+            flags += ["--temperature", str(args.temperature)]
         return [sys.executable, str(entry), *flags], output
 
     def run(self) -> None:

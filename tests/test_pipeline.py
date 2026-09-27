@@ -291,7 +291,10 @@ class PipelineTests(unittest.TestCase):
         self.server.actions = []
         self.run_entry('--check')
         self.assertEqual(self.server.requests, [])
-        self.run_entry()
+        self.run_entry('--temperature', '0.0', '--answer-max-tokens', '1024')
+        generation_requests = [request for request in self.server.requests if 'messages' in request]
+        self.assertTrue(generation_requests)
+        self.assertTrue(all(request['temperature'] == 0.0 for request in generation_requests))
         for dataset in ('locomo', 'longmemeval'):
             pred = self.work / 'outputs' / f'{dataset}_structured_t2mem_full_answers.jsonl'
             row = json.loads(pred.read_text())
@@ -321,6 +324,9 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('JUDGE_API_KEY', result.stderr)
         self.assertEqual(self.server.requests, [])
         self.assertFalse((self.data / 'locomo_processed.json').exists())
+        result = self.run_entry('locomo', '--temperature', 'nan', success=False)
+        self.assertIn('nonnegative finite', result.stderr)
+        self.assertEqual(self.server.requests, [])
         result = self.run_entry('locomo', '--check', env={'T2MEM_LLM_MODEL_NAME': 'your-served-model'}, success=False)
         self.assertIn('served model name', result.stderr)
         # Root and raw/ copies are ambiguous; explicit --data-path resolves it.
