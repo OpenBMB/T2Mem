@@ -41,7 +41,7 @@ echo "Verifying dependencies ..."
 python - <<'PY'
 import sys
 missing = []
-for mod, pkg in (("openai", "openai"), ("tqdm", "tqdm"), ("json_repair", "json-repair"), ("numpy", "numpy")):
+for mod, pkg in (("openai", "openai"), ("tqdm", "tqdm"), ("json_repair", "json-repair"), ("numpy", "numpy"), ("dotenv", "python-dotenv")):
     try:
         __import__(mod)
     except ImportError:
@@ -50,7 +50,7 @@ print(f"  python {sys.version.split()[0]}")
 if missing:
     print("  MISSING: " + ", ".join(missing))
     raise SystemExit(1)
-print("  openai / tqdm / json_repair / numpy  OK")
+print("  openai / tqdm / json_repair / numpy / dotenv  OK")
 PY
 
 echo
