@@ -13,12 +13,14 @@ python -m compileall -q run.py src evaluation tests
 
 Offline integration tests use a mock OpenAI-compatible server and a local embedding stub. A change to model behavior or scoring also needs an actual experiment with the relevant dataset and endpoint; include the configuration and limitations with its results.
 
+`tests/fixtures/original_logic.json` records research-function and prompt hashes from the original experiment code. Its regression checks allow the T2Mem rename, annotations, and deployment plumbing while preserving model-visible prompt strings, algorithm bodies, and experiment defaults. Update this baseline only for an intentional, documented research change.
+
 Use focused Conventional Commits, for example:
 
 ```text
 feat(indexing): add an episode-index field
 fix(inference): resolve raw-session IDs for LongMemEval
-fix(evaluation): retain failed predictions in judge input
+fix(evaluation): preserve failed-prediction filtering
 docs(usage): clarify benchmark reproduction settings
 ```
 

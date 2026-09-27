@@ -1,0 +1,1042 @@
+{
+  "source_sha256": "ce8e4f9d09b751db8945c7038834e1fdb9aad90f1391cc716ce7336cacd9af01",
+  "files": {
+    "evaluation/t2mem_jsonl_to_locomo_judge.py": {
+      "functions": {
+        "main": "6391494c395600444fbf48cda7f96ef7216073e7f9117e5945b9d264664ec7a8"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--prediction-field": {
+          "default": "prediction"
+        },
+        "--skip-errors": {
+          "action": "store_true"
+        }
+      }
+    },
+    "evaluation/locomo_judge.py": {
+      "functions": {
+        "extract_json": "d8fd0e4517be565d69be41262a27e1c05020be5d7ad74e8245d8ba8123f8ec95",
+        "normalize_string": "a6bb5d72c3eddea95261ce234f2e9ba87afad059d2f7a290520d923173bb7e53",
+        "load_predictions": "a3d70fc5a94cbce6d06b2977b13b9f6160517af26c252276def3ae133dc753f9",
+        "judge_one": "d88160cce94b290c2b6533471d483e3f4a783f4476a7f5574b8555f6338782bd",
+        "resolve_output_path": "8d50c6fed7657f3e2488602531e5b8212806cbf82c86e5dd832de7e15f5cde53",
+        "resolve_summary_path": "785fc8e0d8abe6be35cb3d2f6f06f13d47b9462c748aa581ce8e76db0cf29ec3",
+        "require_api_config": "ac53dde81c70c44cf86ef907af978903d23ccc884ae1339a9b8813f3322e54c7",
+        "main": "2dd0c8b0e8a8b374407c6a91788517c6684db75dfba5779ac765626a3b6a7522"
+      },
+      "strings": {
+        "DEFAULT_MODEL_NAME": "f11477bbfdd2899608adc395a552bd3ec6788862931e04554aba85c98114065e",
+        "ACCURACY_PROMPT": "464b53eb7fef153222c2d90c19616ba972c094fcdaf3328690b064e84073df1f"
+      },
+      "literal_constants": {},
+      "cli_options": {
+        "--output-path": {
+          "default": null
+        },
+        "--summary-path": {
+          "default": null
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-workers": {
+          "default": 4
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--max-tokens": {
+          "default": 256
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--limit": {
+          "default": null
+        }
+      }
+    },
+    "evaluation/longmemeval_judge.py": {
+      "functions": {
+        "load_json": "13b47265a018427ef151546ca2ddc4ca5a4fccd23b773ae962a4345dc1f813cb",
+        "load_jsonl": "3820a1e9452300b5defa78fa3ec820eab5bd6e3ba01f12c0c2c52438af55fcec",
+        "load_gold_map": "7d2aa91c648fcb07e13605ccd7963aead778edb1ade3f042b8e3c3d579caab54",
+        "normalize_string": "a6bb5d72c3eddea95261ce234f2e9ba87afad059d2f7a290520d923173bb7e53",
+        "normalize_yes_no": "46d97a5f08c77a8152bde4b9f3d28020e9015bd1d8c61a2c805287723088498f",
+        "is_abstention_row": "cfb6415f013630c95cb9b0b957fc1736aa8d6c31b5d2cefe106d6dbc3d8862d0",
+        "select_prompt": "169348e80e08e5da30e69bdb696a05a2a8c16a1117c04350c9ad32c3f0a63c70",
+        "merge_with_gold": "f43536d46ef7e5bc870bf275015464916ae77f031626147d21843dec4552d16d",
+        "build_judge_prompt": "ecb5bf0c2ab6b1c95f75e5a504eee2546cf36b423ab1395849844a472c85aa35",
+        "require_api_config": "ac53dde81c70c44cf86ef907af978903d23ccc884ae1339a9b8813f3322e54c7",
+        "build_client": "193b988e3ee86bfe117071a645c295215b749b23b060243e82adc2adefaf250b",
+        "call_judge_with_retries": "b3839e2465f8e77ab0fbe4cc4da060dd64b2e26277d53e16fc29407112105748",
+        "judge_one": "1402bf5e5f7a0fbcd416e40dd4ba976e0e56e7f285087f5046cacb4666105003",
+        "summarize_rows": "54e7c4a8dce2a87aa11e7646676bcf6011255b7142c501beb0c77ad8bdf69d12",
+        "resolve_output_path": "9253bfd6ec27c85f489527923772feb6610c7f0ca207673bfc116f98609533fd",
+        "resolve_summary_path": "31b89f2ad8a0cff5e86a227d6c543675113a94ebaf2e1951d4c8d239e7d6b8c8",
+        "main": "2acc69c70bb9520558dc69099cd546cb51079060596fbb72148d8efe60c6cc25"
+      },
+      "strings": {
+        "ANSCHECK_PROMPT_SESSION": "ca0d06f2563543dc2602c9a31794aa35d7ec8d8e75aafe642a7dff901bc2f89e",
+        "ANSCHECK_PROMPT_TEMPORAL": "36e133a5c4af22943805502630d178f06d6d7d4a39cdb803820016d6d3e51ea8",
+        "ANSCHECK_PROMPT_KUPDATE": "5e8f6aa484d44484c16ed3ce2396ee26c0ccbe122a3447a9cd4febe78c161c4b",
+        "ANSCHECK_PROMPT_PREFERENCE": "748a5b8e09a2ea553fb1c62ba19a98a04a90fc8853194266a6e901ccc5c6cfec",
+        "ANSCHECK_PROMPT_ABSTAIN": "5c05eb2ce11f92bd0ae18b9b412575953898531d845028eb9e63e974eb2cba67",
+        "DEFAULT_MODEL_NAME": "f11477bbfdd2899608adc395a552bd3ec6788862931e04554aba85c98114065e"
+      },
+      "literal_constants": {},
+      "cli_options": {
+        "--output-path": {
+          "default": null
+        },
+        "--summary-path": {
+          "default": null
+        },
+        "--prediction-field": {
+          "default": "prediction"
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-workers": {
+          "default": 4
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--max-tokens": {
+          "default": 128
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--limit": {
+          "default": null
+        }
+      }
+    },
+    "src/locomo/t2mem/ada_reading.py": {
+      "functions": {
+        "new_usage_counts": "b8b66709a15d6fd99f4924e221e2822f2ed90db83e77db6b756f0a0b99534f83",
+        "new_token_usage": "82dc65a55c6eef604e2d2738cfdf37d6e977b6423d6c7c18760c527c02656ce2",
+        "_usage_value": "1041a24c83d7fc5044212f9fd3ead483eefe42ebe7cd84cab1947c0728e9d0fb",
+        "extract_response_token_usage": "874d3133b4dbe5823f5550e62a8b24122c8205010c7b5cb90f3d2c4b74512ea9",
+        "add_token_usage": "cc142dac385454255c65879c164376fc63869c6fc62589610805f77663185fba",
+        "merge_token_usage": "c817055fb1e4bd9e7ed6c1509f2f120fa76480730b864088d18384116a650500",
+        "summarize_token_usage_jsonl": "299dd2dfc479027e7144854507b1fc8aea9b3f8217ef07e877fcb19d104ff16b",
+        "format_token_usage": "1a56742dd20c771b07274d1bd96b60e8502ba6095da81ef6db68c9302ca6a814",
+        "load_json": "13b47265a018427ef151546ca2ddc4ca5a4fccd23b773ae962a4345dc1f813cb",
+        "load_jsonl": "3820a1e9452300b5defa78fa3ec820eab5bd6e3ba01f12c0c2c52438af55fcec",
+        "load_raw_session_map": "23b05dba67588b87b71091f8a0cc61c1bbc5acb8b509220ce5cf57bd68b1da58",
+        "load_query_session_map": "6a619f0a792a56aa18e1ba65d15ad7a27e58f0e8459ffddae4998d13f6944536",
+        "load_wiki_map_by_id": "f3061d8e56516b762a2d1cdc25a053bc3c791cecd8c9fa7d600620e9652f8095",
+        "build_question_text": "0da05e4cca5ad2aaae6c7d8a75e2bdd9e63827b9d965b0fe0d49c383a46ecf43",
+        "build_result_metadata": "cea4353e9adccf1c3b03f67f8f96bd98b58ab943b9eac3be4900715ade96029b",
+        "should_skip_t2mem_row": "7d0dea5078a6f36586c88ce3c3ae3e0e75de1b090d2aa6c2dca11d1d9e6e1a34",
+        "wiki_text": "d19fa0314081d82b0ac1ffcef61bb14644a73a0e458a3b8c856cb9c4c4cd8920",
+        "raw_text": "cb8ff8ecab40c0fcde3b51d571c78cb211daa645ec019772ae6f58a25e0cdd4a",
+        "build_wiki_context": "c2ad0b803a07d62657d1f0f621a1d85ee19707e9c9d2d8f011350a709decbded",
+        "build_raw_context": "aa94f6279523723bc8d9a9717be4dbd40d378482b194e95a811c98c747e5c640",
+        "build_raw_direct_context": "abb6ffed4cfa323251854439e0a330fed96eda452dc6d492ceaff508d28a5d53",
+        "normalize_string": "a6bb5d72c3eddea95261ce234f2e9ba87afad059d2f7a290520d923173bb7e53",
+        "normalize_string_list": "f73bc6d58113931c29ba2abd906cac30ba6e9d092479c7afec920c14d260d98b",
+        "normalize_action_response": "b8f542ebac40b6b4d2a966377b41a7b4c0e6ed18bfeb0982083e4042197e5916",
+        "canonicalize_wiki_ids": "319ef7ca0fa85acdfe45acaff27846909968a4fe30fb3a0a3769f10b95f0e428",
+        "extend_evidence": "e58d0957575ef9527bf5dbb32db7d13da82b7bd94a37d5c6b189896be622a547",
+        "format_evidence_list": "1a1dbb093a45aaa439a443747deb1a9495f27169314b15191db36a79f4b2f167",
+        "compose_current_information": "83ef7371ebbe794855c22476c41ae864ebdf112df197b3d79f0fda188eba3bc0",
+        "answer_prompt_pair": "61b598737f523a607718bc8e1ca517061b60525bd7f5e6033e30bdaca3c18253",
+        "call_json_with_retries": "862e2f29d12753c934056e90c0e60750f2a96531064a7f9d1ba2e5d19300d2d3",
+        "build_output_budget_info": "933e5537f06cc335302469624271fd9935a4e0ee797ee5d74932f4fb4782f284",
+        "evidence_from_wikis": "a7579bcf07957ecf52338c0baa0ed01ad9c3281468856d104b5c3b1dda9394c4",
+        "_extract_logprobs": "f7d9fae0a8b28ea9e6775ff75210bada0b83425abfb0012dba6d0545984c675e",
+        "call_text_with_retries": "b3396c38d693d84ca13e6ab5df96fa116d0d5eacedcee4f6f44ad128d8031ee7",
+        "compute_teacher_forcing_logprobs": "2f4583452b20f352d1552e32f8a505f988225458aa486e08bbafbe1920fe9314",
+        "answer_from_evidence": "ba287fccd483392dc6e827dae9d3619dc391181685a09c5fa2f303cf3c6091ec",
+        "build_reasoning_instruction": "553b9b009abed4a0c0752ac6fd02c3ed46a76737871191fd18866f5649d9990a",
+        "run_t2mem_query": "c67793f25fc264ea105bd108ad6ef7eaf0709ddd1959a7df6326b42cf8f2503d"
+      },
+      "strings": {},
+      "literal_constants": {
+        "ALLOWED_ACTIONS": "3f8664a455d4bfa135a63027af14a20f6ff6178c33e3764627a75a3fa7db29b9",
+        "ALLOWED_ACTIONS_NO_RAW": "c038ecc71f35ef31f45dba29cd59e27de7e552dbd16b989ed42720f6a3560c81",
+        "ALLOWED_ACTIONS_RAW_ONLY": "a056addc29c7a881c8b9830128783b774f4e502307aa1f11171b5f07093e935e",
+        "USAGE_COUNT_KEYS": "df0413e2bef4d3d6a814af74a00a4d759d3fc729b0d3b8ff1382c17d2212ea6c",
+        "USAGE_PHASES": "556d034b711ffe372ab8865450d0c38a9312f3f159665ee606a1d8cf7a1f5ce6"
+      },
+      "cli_options": {}
+    },
+    "src/locomo/t2mem/t2mem_answer.py": {
+      "functions": {
+        "main": "4803c2c491a8335057b59cebc9869889978eacbbf2a367200cf55fcc83a500e1"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "locomo",
+            "personamem"
+          ],
+          "default": "locomo"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--retrieval-path": {
+          "default": null
+        },
+        "--wiki-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--controller-model-name": {
+          "default": null
+        },
+        "--answer-model-name": {
+          "default": null
+        },
+        "--top-k": {
+          "default": 5
+        },
+        "--max-steps": {
+          "default": 5
+        },
+        "--max-workers": {
+          "default": 32
+        },
+        "--request-timeout": {
+          "default": 99999999.0
+        },
+        "--action-max-tokens": {
+          "default": 4096
+        },
+        "--reasoning-budget": {
+          "default": null
+        },
+        "--output-budget-tokens": {
+          "default": null
+        },
+        "--answer-max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--limit": {
+          "default": null
+        },
+        "--read-mode": {
+          "choices": [
+            "full",
+            "wiki-only",
+            "raw-only"
+          ],
+          "default": null
+        },
+        "--no-read-raw": {
+          "action": "store_true"
+        },
+        "--dump-prompts": {
+          "action": "store_true"
+        }
+      }
+    },
+    "src/locomo/t2mem/t2mem_summary_answer.py": {
+      "functions": {
+        "summary_wiki_text": "2049955428bdd74b61b459884880949a04487357b1e1ea4f497773b51d8c2d28",
+        "main": "9aeb998557b030c637da12c66d212351c7f86eab8770580ee092fa1f0be73b15"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 5
+        },
+        "--max-steps": {
+          "default": 5
+        },
+        "--max-workers": {
+          "default": 8
+        },
+        "--request-timeout": {
+          "default": 120
+        },
+        "--action-max-tokens": {
+          "default": 4096
+        },
+        "--answer-max-tokens": {
+          "default": 512
+        },
+        "--span-token-budget": {
+          "default": 2048
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--max-retries": {
+          "default": 2
+        }
+      }
+    },
+    "src/locomo/prompt/t2mem_prompt.py": {
+      "functions": {},
+      "strings": {
+        "SESSION_WIKI_SYSTEM_PROMPT": "ba3e73d5efc67720ad7345d9ce50412830fdef0030f9d48e3ad9318a4aed71b1",
+        "SESSION_WIKI_USER_PROMPT_TEMPLATE": "0bffd1bf780332e852e46a49d27be66ea2a8f3b50310c483a2ac12871d845c11",
+        "ADAPTIVE_READING_SYSTEM_PROMPT": "9c74b79c8d98d9d0a7a90ca17c3d44fffe02b04a5f1166bf20fc9d5c515f80e9",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE": "9c3853d65bb28cee6eaaac0226e1f1afdd965795b1d9f10f487b26aac9dc44f5",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK": "31ee02d90684e7d1e4ba6b7d41bef39e951d8443160e702b6dab0e6bd91f8d08",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK": "207cbb57428a62e0aaa4f6691a8546f89c00af9fc7763cfb0e2d4f477fd486fe",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_NO_RAW": "85456f7cc972535b0367a0ae1f2599e9e30d3ad89c0ece88e3f415d29f5c438e",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK_NO_RAW": "673024872711bf1e55d2e236d2505c188e6992f1c93607d409a758607a095283",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_RAW_ONLY": "b8ba57985131458e894e74d768090508a37738a41eb7926bd83d7460252d41a3",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK_RAW_ONLY": "e56ba04b527ab0c53b312a2dcf0d5cdca29f0132a335bb4ff688745ab9fd009a",
+        "QA_ANSWER_LOCOMO_VANILLA_PROMPT_TEMPLATE": "19c476a0075a3d9a9346f13499a9b52c1d82a70f268a00dfd2725fb5e04e63b1",
+        "QA_ANSWER_LOCOMO_ADA_PROMPT_TEMPLATE": "9153b620053649263e4ce0db7d5460ffa37e83a022753b047f3c0e95dec535e7",
+        "QA_ANSWER_PERSONAMEM_ADA_PROMPT_TEMPLATE": "77c3699990c80ca6589a795264c2c7c85456981489493d9e44b1996859dd3286"
+      },
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/locomo/retrieval/locomo_retrieval_raw.py": {
+      "functions": {
+        "_session_text": "6ed4844bcb480d0634e7038c60f66789dbf39b47d6f14540f2fd404a67006cca",
+        "_normalize_evidence": "b37fae35bbc02c66c09ceaae563957f1bfcbc7337a97c1557c1b903b658d4a1b",
+        "main": "8fff062a67c05613a3277244df23fd609f2ef28e4eba594a0df7b92cce8ce87c"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 32
+        }
+      }
+    },
+    "src/locomo/retrieval/locomo_retrieval_summary_wiki.py": {
+      "functions": {
+        "wiki_text": "c7116a3c8242d315c8991200467dfe5cfa6e405eb20b31be780e724b9a731e1c",
+        "main": "eaf6cd76de0b471506135ead100c1aa87ecb54d97758cd8d7c1d8b77b7b2e93c"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 16
+        }
+      }
+    },
+    "src/locomo/retrieval/locomo_retrieval_wiki.py": {
+      "functions": {
+        "_items": "564114d7b015f5772b8ca42003e091c5ce0119be14ee87e0e3f7e9503ac24477",
+        "_wiki_text": "9e1c9f4af253da330a384c15e10653d3bf9ca982d99384f2d13b943e0f05fcc1",
+        "main": "9d5c4493ae9cb59ca31dff31c25b8cc36d6ceba123c96746f9d3e2dadc8b9670"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 32
+        }
+      }
+    },
+    "src/locomo/retrieval/locomo_retrieval_wiki_api.py": {
+      "functions": {
+        "_items": "564114d7b015f5772b8ca42003e091c5ce0119be14ee87e0e3f7e9503ac24477",
+        "_wiki_text": "9e1c9f4af253da330a384c15e10653d3bf9ca982d99384f2d13b943e0f05fcc1",
+        "_load_openai": "8171ff80a916ad0adb68c4bde3c2badeb7a72d0ffc94aa65f911cb3d45800959",
+        "_normalize_embeddings": "1e7f010bebfcc441258b5d3fb99b965e961ba22cb5deb6eadd23fb42b547c238",
+        "_embedding_from_item": "f0be41087d7551828e2a94297786cdd6ffbd6105bacd7925d4aae716d5f72124",
+        "embed_texts": "230d89316801d897b2f5ba94cf27019d770e1374c2d8df702c3654d6cead656d",
+        "main": "1aad50310a31016e220c31c13ef74c6bac81612518e44da6859bf53daa7ea242"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 32
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-retries": {
+          "default": 3
+        }
+      }
+    },
+    "src/locomo/utils/config.py": {
+      "functions": {
+        "ensure_dir": "66b097a0bc3906ff8e6ef3e66e3cd92c44ca9a465a14bb2222d73add97726313",
+        "ensure_parent": "2f93f869be5491d336d7a3ec12ecc39a3ea25d6da0ba61e85be575b58ddfdb14"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/locomo/utils/llm_utils.py": {
+      "functions": {
+        "force_ascii_json_body": "2c8d5da8525a3573395f75601c6096b0fa1b8da054a7754c09662b1dad32b9b4",
+        "reset_token_counters": "074d374e1cebf6167912a069831d428e9f02a265f5428899d8713cfcb794a203",
+        "get_token_usage": "f167159c78b529fae655a3d23b4d3248fcc6b37a61d4341ec1d8fbb2fa093f5e",
+        "_record_usage": "13452786a550e42d98e1c757798f2f73dd45d5d110110ad772231031f2269240",
+        "build_client": "8a37e0358500389e91949d61e05c2f827c4ff5afddae3c2fc7cca0d6e0f15424",
+        "call_llm": "d162a6fe713b19fbedf5135156fb13174d73454ee4a9d763936c951c3f150051",
+        "call_json_llm": "f2a9e44528ac1b8264cbee586f41c5bd0d51fe57560da0554663b0931e07fbd3",
+        "strip_code_fences": "abacb78a49dbe43ac8a197e4f9beb4b9b1dbf3b2f999203f0dcce4a33b74c1c6",
+        "extract_first_json_object": "60d2b0e153cb7561cf00895d4b8b436f966123782ee44229a139bfdbff889b90",
+        "parse_json_response": "97598e0dff3f9fae4f05efd12d8e45bb243182166904dd915f34c081d8c21c7d",
+        "_close_truncated_braces": "f3ae23f63ddfd96a3cece0e2bc04d3e339b0cb2760736b266363ff7361071fa2",
+        "_cut_unterminated_tail": "28452709532997ca211d06c115953c8317bb98f169b313207709d0825f3ba556",
+        "parse_json_response_lenient": "d589b9d33666d03deda48dcd60a206559506080c5f7c898c7d38226d087c03c2"
+      },
+      "strings": {},
+      "literal_constants": {
+        "DEFAULT_DISABLE_THINKING_EXTRA_BODY": "4b4600445ee41a5d741d063dfc5f0baf55444d59ae1a1e75ccb1cf7f9f3374bd",
+        "_patch_done": "e251bfebe194496571959704f2c0a314d3455593d5e0e7b238c6b57ff96e3dc5",
+        "_prompt_tokens": "662f54c9cdb8066669beacafcc39f6e0f462c142c1d4c91f7f0bd3a34a2326ce",
+        "_completion_tokens": "662f54c9cdb8066669beacafcc39f6e0f462c142c1d4c91f7f0bd3a34a2326ce"
+      },
+      "cli_options": {}
+    },
+    "src/locomo/utils/read_locomo.py": {
+      "functions": {
+        "load_locomo_samples": "73e11996e8d1b8b7fead70e553240188fd21099292348de954cfc50c165c73b3",
+        "iter_session_records": "dab953232531a5b74c3b1b1ba8ad67eb77fbe013af7b45e217fd64852b0969f5"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/locomo/utils/repair_wiki_errors.py": {
+      "functions": {
+        "load_jsonl": "3820a1e9452300b5defa78fa3ec820eab5bd6e3ba01f12c0c2c52438af55fcec",
+        "row_key": "0e7679dffa617c42321e2d7732b09595ca05a917a14c4a2ca3454633dc835a90",
+        "task_key": "bcf6f03fdad0b2bde06e8bddabcfa1dbb86809d928e369882352c641b38e6080",
+        "build_task_map": "b55f5c351719208d207883e7b99b58c49be026c7d30c32f5121b895012df8975",
+        "default_output_path": "2a7387ecfdac814e3a3fcef7fbbba69cb616244837a622fdeab33713b2b58d98",
+        "_build_repair_runner": "cef9c644c1bda666cd1dcbca344e4106efa8763f8b443907a3978c4c0083ef28",
+        "repair_rows": "6dfdf8193060ae123156f6e6b8c9dfe6b835ae349491519ab730ce50bc78ba29",
+        "write_jsonl": "2faf52edb06cc4f1f6f184c6d71dfa7c0872f08e778ecbc04b5f9d74a8b4f186",
+        "main": "144e0fc798ab6572e133d51ed8924da30e2238f29461d3c350742b8d74dc3d54"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "locomo"
+          ],
+          "default": "locomo"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--wiki-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--max-workers": {
+          "default": 8
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.05
+        }
+      }
+    },
+    "src/locomo/wiki/build_summary_wiki.py": {
+      "functions": {
+        "load_tasks": "0651b466776751ff27afc269d648f642031bf74114a6740ae67bade97daa1378",
+        "load_completed_ids": "7f608dca3dba210f562624a17981333c160bf002a7b443eeb4bbcb026e923a4e",
+        "build_prompt": "a689af99500150671c050983d2f56b3754fa25f5b6c095be41084fa3102fe389",
+        "build_runner": "726695942df90cd5ec40a397ce3fc62f81b093c72da6c7a04c9b4a73e0470f98",
+        "main": "56c1a36f85279cb30887d31e3938a339c6b725177b671b58829a308c7ccab56e"
+      },
+      "strings": {
+        "SUMMARY_PROMPT": "80eec6e9d348782112b2f22992a3fa6f544e43a4cfe159f3d4d8a17878cbcbca"
+      },
+      "literal_constants": {},
+      "cli_options": {
+        "--max-workers": {
+          "default": 16
+        },
+        "--request-timeout": {
+          "default": 180
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--max-retries": {
+          "default": 3
+        },
+        "--resume": {
+          "action": "store_true"
+        },
+        "--disable-thinking": {
+          "action": "store_true"
+        },
+        "--print-first-prompt": {
+          "action": "store_true"
+        }
+      }
+    },
+    "src/locomo/wiki/build_wiki.py": {
+      "functions": {
+        "_text": "4b14b4a61e5282194e3f33a6635dcb0d0e3d170dbda92e6e53dd6ac3b7685149",
+        "_items": "4d3491aabf8cb9e54b8dd9db43946263dd472a9095f8d6c5d561eed15396406a",
+        "_normalize": "8c34a98143bf2b93551d8248885da53cd12b8f87121bec50fa2b56f21c22b5d9",
+        "_load_records": "307bf93e7e16d269b30a60781c5c149ab3dcf4a9147da63ac6890ddef17c05c3",
+        "_task_meta": "081778eed5db038989492ea38425413197a50e95b8a28147c727c8832afb3030",
+        "_record_tasks": "a5d0c2909e3337f8cb001e9d0e367e2ab01932422669fded6546b922a1a0f462",
+        "_success_row": "a8080448a0a61ffa5a9ad4e15cef6f8afdc92d40d0ae866f52691a895bd341d5",
+        "_error_row": "ca863311bebee7c31e31bae9440549cbe56659116d0d4ec40022df0973b50404",
+        "_build_openai_runner": "ac3be20cedf1a8db2d282dbf8a413350b2a9df0597c3dedeab0724c7ea6df282",
+        "main": "3d79a8a9c08ae060247eb1b93a3520882285b327a7e35f06fc944bd2658fc0b8"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "locomo"
+          ],
+          "default": "locomo"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--no-extra-body": {
+          "action": "store_true"
+        },
+        "--max-workers": {
+          "default": 32
+        },
+        "--max-retries": {
+          "default": 3
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.05
+        }
+      }
+    },
+    "src/locomo/wiki/preprocess_data.py": {
+      "functions": {
+        "main": "7fcc2720d454837c36100b35437ee41fddb6ac6fb1ea910165c6776131faa121"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "locomo"
+          ],
+          "default": "locomo"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        }
+      }
+    },
+    "src/longmemeval/t2mem/ada_reading.py": {
+      "functions": {
+        "load_json": "13b47265a018427ef151546ca2ddc4ca5a4fccd23b773ae962a4345dc1f813cb",
+        "load_jsonl": "3820a1e9452300b5defa78fa3ec820eab5bd6e3ba01f12c0c2c52438af55fcec",
+        "load_raw_session_map": "23b05dba67588b87b71091f8a0cc61c1bbc5acb8b509220ce5cf57bd68b1da58",
+        "load_query_session_map": "4a1deba6364c40fc58622ce48fd670ef0e35f933c4a85d7444744f86659ffc95",
+        "load_query_wiki_map": "21e6cff8e87afa79e30e785ef97e9daf9b39d39629e4bae2581fd8e51fb4f045",
+        "build_result_metadata": "15bb44ec0c8239eccebd8761c6c9e0ec449724c3ff94feba26a5a1496a792693",
+        "wiki_text": "d19fa0314081d82b0ac1ffcef61bb14644a73a0e458a3b8c856cb9c4c4cd8920",
+        "raw_text": "cb8ff8ecab40c0fcde3b51d571c78cb211daa645ec019772ae6f58a25e0cdd4a",
+        "build_wiki_context": "574d92f55249bb65b27f8e18d3527029d0d60b2dd357c9fad0b0f9f00d265412",
+        "build_raw_context": "13a4737ff0d89df251645973a148f7f0c8106238c0b75f7845825b5737bbfdf2",
+        "build_raw_direct_context": "13f5d5882a33a65a052a25d5c75df6fc3f51735eba551d6fea1b60981896801e",
+        "normalize_string": "a6bb5d72c3eddea95261ce234f2e9ba87afad059d2f7a290520d923173bb7e53",
+        "normalize_string_list": "f73bc6d58113931c29ba2abd906cac30ba6e9d092479c7afec920c14d260d98b",
+        "normalize_action_response": "b8f542ebac40b6b4d2a966377b41a7b4c0e6ed18bfeb0982083e4042197e5916",
+        "canonicalize_wiki_ids": "c1ede28ed02105c541c9a4e8bbbc4d783b41552c0d9f3418c0aa3a323899c271",
+        "extend_evidence": "e58d0957575ef9527bf5dbb32db7d13da82b7bd94a37d5c6b189896be622a547",
+        "format_evidence_list": "1a1dbb093a45aaa439a443747deb1a9495f27169314b15191db36a79f4b2f167",
+        "compose_current_information": "83ef7371ebbe794855c22476c41ae864ebdf112df197b3d79f0fda188eba3bc0",
+        "answer_prompt_pair": "9fe49eed323f8c09467d2fb15158a86ecde6d0288f01314894003f84cd78857b",
+        "call_json_with_retries": "494795d80435d6f1b7172fbf0f0733075e8b0fedc14cf9c45734c3b87859de6c",
+        "call_answer_with_retries": "0faf85a97562e0143305f027e36341c53452dd4d2f9a9cf20ccef534460b885a",
+        "answer_from_evidence": "2fba92d63f3ba628a31d9e9a212bf3eed63b641e36e0899496bfe1128fce3c04",
+        "run_t2mem_query": "369d86ceaf94963fd725b7ef8798dbdd33aaef1418f830ea411562a5a723e7a8"
+      },
+      "strings": {},
+      "literal_constants": {
+        "ALLOWED_ACTIONS": "3f8664a455d4bfa135a63027af14a20f6ff6178c33e3764627a75a3fa7db29b9",
+        "ALLOWED_ACTIONS_NO_RAW": "c038ecc71f35ef31f45dba29cd59e27de7e552dbd16b989ed42720f6a3560c81",
+        "ALLOWED_ACTIONS_RAW_ONLY": "a056addc29c7a881c8b9830128783b774f4e502307aa1f11171b5f07093e935e"
+      },
+      "cli_options": {}
+    },
+    "src/longmemeval/t2mem/t2mem_answer.py": {
+      "functions": {
+        "main": "00e584efa78eb86ed65168a23dbf37370cfe6e20561272aad5036407fbc8682b"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--retrieval-path": {
+          "default": null
+        },
+        "--wiki-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--controller-model-name": {
+          "default": null
+        },
+        "--answer-model-name": {
+          "default": null
+        },
+        "--top-k": {
+          "default": 5
+        },
+        "--max-steps": {
+          "default": 5
+        },
+        "--max-workers": {
+          "default": 32
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--action-max-tokens": {
+          "default": 4096
+        },
+        "--answer-max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--limit": {
+          "default": null
+        },
+        "--read-mode": {
+          "choices": [
+            "full",
+            "wiki-only",
+            "raw-only"
+          ],
+          "default": "full"
+        }
+      }
+    },
+    "src/longmemeval/t2mem/t2mem_summary_answer.py": {
+      "functions": {
+        "summary_wiki_text": "2049955428bdd74b61b459884880949a04487357b1e1ea4f497773b51d8c2d28",
+        "main": "9f2dd06d023e40d98dc1aa7ce828758b9406eedb4fd271062af7522b117a6a03"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--controller-model-name": {
+          "default": null
+        },
+        "--answer-model-name": {
+          "default": null
+        },
+        "--top-k": {
+          "default": 5
+        },
+        "--max-steps": {
+          "default": 5
+        },
+        "--max-workers": {
+          "default": 8
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--action-max-tokens": {
+          "default": 4096
+        },
+        "--answer-max-tokens": {
+          "default": 1024
+        },
+        "--span-token-budget": {
+          "default": 2048
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--limit": {
+          "default": null
+        }
+      }
+    },
+    "src/longmemeval/prompt/t2mem_prompt.py": {
+      "functions": {},
+      "strings": {
+        "SESSION_WIKI_SYSTEM_PROMPT": "ba3e73d5efc67720ad7345d9ce50412830fdef0030f9d48e3ad9318a4aed71b1",
+        "SESSION_WIKI_USER_PROMPT_TEMPLATE": "0bffd1bf780332e852e46a49d27be66ea2a8f3b50310c483a2ac12871d845c11",
+        "ADAPTIVE_READING_SYSTEM_PROMPT": "9c74b79c8d98d9d0a7a90ca17c3d44fffe02b04a5f1166bf20fc9d5c515f80e9",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE": "9f38a67eceba56a2b7aef6772554e5201931985852803225dbcaa9b7eaf8ee2b",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK": "31ee02d90684e7d1e4ba6b7d41bef39e951d8443160e702b6dab0e6bd91f8d08",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK": "08930132634507586ed53001e672e1ea4e080759f416e6450e114da51673b83e",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_NO_RAW": "85456f7cc972535b0367a0ae1f2599e9e30d3ad89c0ece88e3f415d29f5c438e",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK_NO_RAW": "227537aa9abe5c4e4b57d33bf56dc324c74877c724ad7df4b4b7250c35e25863",
+        "ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_RAW_ONLY": "b8ba57985131458e894e74d768090508a37738a41eb7926bd83d7460252d41a3",
+        "ADAPTIVE_READING_ACTION_PROMPT_TEMPLATE_NO_LOOK_RAW_ONLY": "ea0aab39cbde916ae76bb29ac8bcc407bafa2d708bb5afdcc89c1bf8619d4a1b",
+        "QA_ANSWER_LONGMEM_VANILLA_PROMPT_TEMPLATE": "36263cb580f5c68667cc9038025a8c5c9804c663c7f7d97c13081f8ff949d21d",
+        "QA_ANSWER_LONGMEM_ADA_PROMPT_TEMPLATE": "4519bf157cc1c4dff818922eccbad6976d196808983a8980f7974d84623df474"
+      },
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/longmemeval/retrieval/longmemeval_retrieval_raw.py": {
+      "functions": {
+        "_session_text": "6ed4844bcb480d0634e7038c60f66789dbf39b47d6f14540f2fd404a67006cca",
+        "_query_text": "850253422e1ea4168fccf0d89840aadaa7bf89d28c3c179c42ce1885aa94f4a8",
+        "main": "ed7a51efe96f136cf30fea24e671a3d4be60d78310326b58ec3714605708aa03"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 5
+        },
+        "--batch-size": {
+          "default": 32
+        }
+      }
+    },
+    "src/longmemeval/retrieval/longmemeval_retrieval_summary_wiki.py": {
+      "functions": {
+        "wiki_text": "c7116a3c8242d315c8991200467dfe5cfa6e405eb20b31be780e724b9a731e1c",
+        "query_text": "1b7f0811ba8bbc0545f462b68bac9a4fa7eba8729b92d4dd502de3f3b306a41a",
+        "main": "3d392f79d64ed9fffbd8a61d50fa1229ecd5097d02cfd4ec3e165e220104a311"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 16
+        }
+      }
+    },
+    "src/longmemeval/retrieval/longmemeval_retrieval_wiki.py": {
+      "functions": {
+        "_items": "564114d7b015f5772b8ca42003e091c5ce0119be14ee87e0e3f7e9503ac24477",
+        "_wiki_text": "fab7cca89a1112176abd26cb4f9123850629546b89d6a6711e7d70be5a36a82d",
+        "_query_text": "850253422e1ea4168fccf0d89840aadaa7bf89d28c3c179c42ce1885aa94f4a8",
+        "main": "7f42d532d5904489bcda4e7876b0df2f2a049422ebf158a6de9053abe492f971"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--top-k": {
+          "default": 10
+        },
+        "--batch-size": {
+          "default": 16
+        }
+      }
+    },
+    "src/longmemeval/utils/config.py": {
+      "functions": {
+        "ensure_dir": "66b097a0bc3906ff8e6ef3e66e3cd92c44ca9a465a14bb2222d73add97726313",
+        "ensure_parent": "2f93f869be5491d336d7a3ec12ecc39a3ea25d6da0ba61e85be575b58ddfdb14"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/longmemeval/utils/llm_utils.py": {
+      "functions": {
+        "build_client": "5a1f093e15cbde8e7dbca65538b24aff4acbf97bab5d59b8ee751bc3ea6a68c9",
+        "call_llm": "fc1ac5cd7c8a2f356cd999a9445b41f5e364ba74f9e90f3b1030e1481ccdd69e",
+        "call_json_llm": "f2a9e44528ac1b8264cbee586f41c5bd0d51fe57560da0554663b0931e07fbd3",
+        "strip_code_fences": "abacb78a49dbe43ac8a197e4f9beb4b9b1dbf3b2f999203f0dcce4a33b74c1c6",
+        "extract_first_json_object": "60d2b0e153cb7561cf00895d4b8b436f966123782ee44229a139bfdbff889b90",
+        "parse_json_response": "60abca21e02c0b7b4d79ebe2203cf4f5ebf678147bdffa43fe73f638d4df70b6"
+      },
+      "strings": {},
+      "literal_constants": {
+        "DEFAULT_DISABLE_THINKING_EXTRA_BODY": "4b4600445ee41a5d741d063dfc5f0baf55444d59ae1a1e75ccb1cf7f9f3374bd"
+      },
+      "cli_options": {}
+    },
+    "src/longmemeval/utils/read_longmemeval.py": {
+      "functions": {
+        "load_longmemeval_samples": "50465bc325af7e986607c53223d452dd65ed37279ad2fcda5fbec0a5831349bd",
+        "iter_session_records": "ea926b7f1a1adf1a44bcf48070a9443e67d40c3aef48fcd56ea0972172189e92"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {}
+    },
+    "src/longmemeval/utils/repair_wiki_errors.py": {
+      "functions": {
+        "load_jsonl": "3820a1e9452300b5defa78fa3ec820eab5bd6e3ba01f12c0c2c52438af55fcec",
+        "row_key": "888627c5c1bca47fac63e66edb6a3c1488bfb305f5045577f2b032f364aa13c7",
+        "task_key": "2f7bd1dfef24105076328828ea58e7b2d949372f0782d5d6c7b4b958b35c2a63",
+        "build_task_map": "b55f5c351719208d207883e7b99b58c49be026c7d30c32f5121b895012df8975",
+        "default_output_path": "2a7387ecfdac814e3a3fcef7fbbba69cb616244837a622fdeab33713b2b58d98",
+        "selected_entries": "27d226aec4478792f5b64c025e122370a7f3287ee74a8d89912bf04a3962447d",
+        "_build_repair_runner": "cef9c644c1bda666cd1dcbca344e4106efa8763f8b443907a3978c4c0083ef28",
+        "repair_rows": "49ade579e01d8f325405387b2d858a82c0f07b62cb0a9cf0d5c69342bf633a97",
+        "write_jsonl": "2faf52edb06cc4f1f6f184c6d71dfa7c0872f08e778ecbc04b5f9d74a8b4f186",
+        "main": "52e714b58476c81fce89677c2c1f03e3a89580fbac479d7409c95f53ae55f5fd"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--wiki-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--in-place": {
+          "action": "store_true"
+        },
+        "--extra-wiki-id": {
+          "action": "append",
+          "default": []
+        },
+        "--max-workers": {
+          "default": 8
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.05
+        }
+      }
+    },
+    "src/longmemeval/wiki/build_summary_wiki.py": {
+      "functions": {
+        "_text": "4b14b4a61e5282194e3f33a6635dcb0d0e3d170dbda92e6e53dd6ac3b7685149",
+        "_load_records": "307bf93e7e16d269b30a60781c5c149ab3dcf4a9147da63ac6890ddef17c05c3",
+        "_task_meta": "1a58599d4b3cc8e5a1849db68baab20cdfd6945f3f0b2c1ad3b7d14850970924",
+        "_record_tasks": "20d1169e8ad5746abd416d7a1d08fda384911d612debc2026ef504bf19576a9c",
+        "_task_key": "22cf3b4cfe69ea977a7af4510ff0b0851204b2f95bfb8b6c3ba9f73d4b22e8d5",
+        "_success_row": "326dd73500a859a926de2ea1b0db0ed26da8dcd79e5ea730ff7f1b4caf70ca8f",
+        "_error_row": "ca863311bebee7c31e31bae9440549cbe56659116d0d4ec40022df0973b50404",
+        "_build_prompt": "e05c92f8951b7be1775ecbd0eda651c400514372274dccf8ce673bb86555e5f5",
+        "_load_completed_keys": "9ba82e65ed970a2d436b18bb53bdc6a42dc6f70f1cffb662b6876012f30670ab",
+        "_build_openai_runner": "a2c8674f3a8be4b22d57bfd58ef078a253d507a24487e83a57adf9188c9a273d",
+        "main": "b82019523c5bad72fd1230472a6733a74cf469b6c523344c783a6d1136cabd70"
+      },
+      "strings": {
+        "SUMMARY_PROMPT": "afa81ae7b0e253630b8fe40c1ebdf7b27e5327805cff7e02b839e35b5ad2ea4a"
+      },
+      "literal_constants": {
+        "DEFAULT_DISABLE_THINKING_EXTRA_BODY": "4b4600445ee41a5d741d063dfc5f0baf55444d59ae1a1e75ccb1cf7f9f3374bd"
+      },
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--max-workers": {
+          "default": 32
+        },
+        "--max-retries": {
+          "default": 3
+        },
+        "--request-timeout": {
+          "default": 180.0
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.0
+        },
+        "--limit": {
+          "default": null
+        },
+        "--resume": {
+          "action": "store_true"
+        },
+        "--disable-thinking": {
+          "action": "store_true",
+          "default": true
+        },
+        "--enable-thinking": {
+          "action": "store_false"
+        },
+        "--print-first-prompt": {
+          "action": "store_true"
+        }
+      }
+    },
+    "src/longmemeval/wiki/build_wiki.py": {
+      "functions": {
+        "_text": "4b14b4a61e5282194e3f33a6635dcb0d0e3d170dbda92e6e53dd6ac3b7685149",
+        "_items": "4d3491aabf8cb9e54b8dd9db43946263dd472a9095f8d6c5d561eed15396406a",
+        "_normalize": "8c34a98143bf2b93551d8248885da53cd12b8f87121bec50fa2b56f21c22b5d9",
+        "_load_records": "307bf93e7e16d269b30a60781c5c149ab3dcf4a9147da63ac6890ddef17c05c3",
+        "_task_meta": "1a58599d4b3cc8e5a1849db68baab20cdfd6945f3f0b2c1ad3b7d14850970924",
+        "_record_tasks": "a5d0c2909e3337f8cb001e9d0e367e2ab01932422669fded6546b922a1a0f462",
+        "_success_row": "a8080448a0a61ffa5a9ad4e15cef6f8afdc92d40d0ae866f52691a895bd341d5",
+        "_error_row": "ca863311bebee7c31e31bae9440549cbe56659116d0d4ec40022df0973b50404",
+        "_build_openai_runner": "d1873635e700a41ebb399916d1c733b657a555d15af3e544767c25ca181b5aec",
+        "main": "89a4704475b63412919a98dffcbe71b0a44c060c83309f7c41541315a4175b79"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--max-workers": {
+          "default": 16
+        },
+        "--max-retries": {
+          "default": 2
+        },
+        "--request-timeout": {
+          "default": 120.0
+        },
+        "--max-tokens": {
+          "default": 1024
+        },
+        "--temperature": {
+          "default": 0.05
+        }
+      }
+    },
+    "src/longmemeval/wiki/preprocess_data.py": {
+      "functions": {
+        "main": "1d27eee4d513915a14d689ab2ca4a8e1098072be4d0f796c513041aa3a33d33b"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {
+        "--dataset": {
+          "choices": [
+            "longmemeval"
+          ],
+          "default": "longmemeval"
+        },
+        "--data-path": {
+          "default": null
+        },
+        "--output-path": {
+          "default": null
+        },
+        "--question-types": {
+          "default": null
+        }
+      }
+    },
+    "evaluation/config.py": {
+      "functions": {
+        "ensure_parent": "0cf94b5f1d1b021b3999dd1565774b8e2b85abacdbf75968a714d440fcbe7577"
+      },
+      "strings": {},
+      "literal_constants": {},
+      "cli_options": {}
+    }
+  }
+}
