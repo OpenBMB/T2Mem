@@ -75,6 +75,8 @@ set +a
 
 `.env` is ignored by Git. No credentials or remote deployment addresses are bundled. Local endpoints without authentication use the `EMPTY` key placeholder; the judges require an endpoint and an API key.
 
+The [`.env.example`](.env.example) template documents the LLM, embedding, and judge settings separately, plus optional data paths and runner parameters. Scripts do not automatically load `.env`; run the export commands above in each new shell. Controller and answer models use `T2MEM_LLM_MODEL_NAME` by default; select different models on the same endpoint with `--controller-model-name` and `--answer-model-name`.
+
 | Setting | Purpose |
 |---|---|
 | `T2MEM_LLM_BASE_URL`, `T2MEM_LLM_MODEL_NAME`, `T2MEM_LLM_API_KEY` | Episode indexing and inference |
