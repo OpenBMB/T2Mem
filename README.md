@@ -55,7 +55,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-Episode indexing, inference, and evaluation call OpenAI-compatible APIs. Retrieval supports API embeddings for structured LoCoMo indexes and local embeddings for all supported representations. Install the optional local backend when needed:
+Episode indexing, inference, and evaluation call OpenAI-compatible APIs. Retrieval supports API and local embeddings for every representation on both benchmarks. Install the optional local backend when needed:
 
 ```bash
 python -m pip install -r requirements-local.txt
@@ -63,127 +63,130 @@ python -m pip install -r requirements-local.txt
 
 Local embeddings require a sentence-transformers model and install PyTorch. The LLM stages do not load local model weights.
 
-### 2. Configure endpoints
+### 2. Configure endpoints once
 
 ```bash
 cp .env.example .env
-# Edit .env with your endpoint URLs, served model names, and keys.
-set -a
-source .env
-set +a
+# Fill in the LLM, embedding, and judge settings in .env.
 ```
 
-`.env` is ignored by Git. No credentials or remote deployment addresses are bundled. Local endpoints without authentication use the `EMPTY` key placeholder; the judges require an endpoint and an API key.
-
-The [`.env.example`](.env.example) template documents the LLM, embedding, and judge settings separately, plus optional data paths and runner parameters. Scripts do not automatically load `.env`; run the export commands above in each new shell. Controller and answer models use `T2MEM_LLM_MODEL_NAME` by default; select different models on the same endpoint with `--controller-model-name` and `--answer-model-name`.
+[`run.py`](run.py) automatically loads the repository's `.env`. The precedence is **CLI options → existing environment variables → `.env` → defaults**. Keys are kept out of Git. No `source` command is needed for the unified entry point.
 
 | Setting | Purpose |
 |---|---|
 | `T2MEM_LLM_BASE_URL`, `T2MEM_LLM_MODEL_NAME`, `T2MEM_LLM_API_KEY` | Episode indexing and inference |
-| `T2MEM_EMBEDDING_BASE_URL`, `T2MEM_EMBEDDING_MODEL_NAME`, `T2MEM_EMBEDDING_API_KEY` | API embedding retrieval |
+| `T2MEM_CONTROLLER_MODEL_NAME`, `T2MEM_ANSWER_MODEL_NAME` | Optional separate models on the same LLM endpoint |
+| `T2MEM_EMBEDDING_BASE_URL`, `T2MEM_EMBEDDING_MODEL_NAME`, `T2MEM_EMBEDDING_API_KEY` | API embeddings for both benchmarks and every representation |
+| `EMBED_BACKEND` | `api` (default in `run.py`) or `local` |
 | `T2MEM_EMBEDDING_MODEL` | Local embedding model path or model ID |
 | `JUDGE_BASE_URL`, `JUDGE_API_KEY`, `JUDGE_MODEL` | LLM-judge evaluation |
 
-Runner overrides and supported parameter combinations are described in [docs/experiments.md](docs/experiments.md).
+With API embeddings, both benchmarks need only `requirements.txt`; there is no local LLM or PyTorch requirement. Choose the local embedding backend and install `requirements-local.txt` when needed.
 
 <a id="reproduction"></a>
 
 ## 🔧 Reproduction Guide
 
-Run the following stages from the repository root. Runner scripts also resolve their source paths correctly when called from another directory.
+### 1. Put the raw datasets in `data/`
 
-### 1. Prepare benchmark data
-
-Download the raw benchmarks from their upstream releases and place them under `data/raw/`:
-
-- [LoCoMo](https://github.com/snap-research/locomo): `data/raw/locomo10.json`
-- [LongMemEval](https://github.com/xiaowu0162/LongMemEval): `data/raw/longmemeval_s_cleaned.json`
-
-Datasets and generated artifacts are excluded from Git. Download commands, schemas, and expected filenames are in [data/README.md](data/README.md).
-
-```bash
-bash scripts/preprocess_data.sh locomo
-bash scripts/preprocess_data.sh longmemeval
+```text
+data/
+├── locomo10.json                 # LoCoMo
+└── longmemeval_s_cleaned.json     # LongMemEval
 ```
 
-### 2. Build episode indexes
+Either or both files may be present. Download them from [LoCoMo](https://github.com/snap-research/locomo) and [LongMemEval](https://github.com/xiaowu0162/LongMemEval); commands and schemas are in [data/README.md](data/README.md). The previous `data/raw/` location is also supported. Datasets and generated artifacts stay out of Git.
+
+### 2. Run with one command
 
 ```bash
-bash scripts/run_build_wiki.sh locomo
-bash scripts/run_build_wiki.sh longmemeval
+python run.py --check   # Validate inputs/configuration; no model calls.
+python run.py           # Discover available datasets and run all five stages.
 ```
 
-Each session becomes an index containing its summary, event core, atomic facts, entities, temporal clues, resolved temporal facts, and ongoing threads. The source files use `wiki` to refer to these episode indexes.
-
-### 3. Retrieve candidate episodes
+The full pipeline runs **preprocess → index → retrieve → infer → evaluate**. To select a benchmark or omit evaluation:
 
 ```bash
-# LoCoMo: OpenAI-compatible embedding API (configured in .env).
-bash scripts/run_retrieval.sh locomo wiki
-
-# LongMemEval: local embeddings (requires requirements-local.txt).
-EMBED_BACKEND=local bash scripts/run_retrieval.sh longmemeval wiki
+python run.py locomo
+python run.py longmemeval
+python run.py locomo --skip-eval
 ```
 
-The default retrieval candidate count is 10; the reader initially observes 5 candidates. Set `TOP_K` on the respective runner to change either count.
+A full run requires LLM, embedding, and judge configuration. `--skip-eval` requires only the LLM and embedding configuration. The entry point checks configuration and dependencies before starting, then verifies each stage's artifacts. Failed or missing rows stop the pipeline with a nonzero exit status and an artifact/log path.
 
-### 4. Construct memory and answer
+Raw input files are read only. Processed data, indexes, retrieval files, logs, and prediction/evaluation directories are created automatically. Repeating a stage replaces its generated output; existing files are not silently reused.
+
+### 3. Run individual stages
 
 ```bash
-bash scripts/run_t2mem.sh locomo full
-bash scripts/run_t2mem.sh longmemeval full
-
-# Small run before launching a full experiment.
-bash scripts/run_t2mem.sh locomo full --limit 5
+python run.py locomo --stage preprocess
+python run.py locomo --stage index
+python run.py locomo --stage retrieve
+python run.py locomo --stage infer
+python run.py locomo --stage evaluate
 ```
 
-The default output filenames are:
+Use `longmemeval` for the other benchmark. Each stage checks its required inputs, so no manual file-path wiring is needed. For a custom filename, use `--data-path` when preprocessing:
+
+```bash
+python run.py longmemeval --stage preprocess --data-path data/my_longmemeval.json
+```
+
+For an existing prediction file:
+
+```bash
+python run.py locomo --stage evaluate --predictions outputs/my_run.jsonl
+```
+
+### 4. Change experiment settings
+
+```bash
+# Query subset before a full run; indexes/retrieval still cover the full dataset.
+python run.py locomo --limit 5
+
+# Independent candidate and initial-observation counts.
+python run.py locomo --retrieval-top-k 10 --top-k 5
+
+# Reading-mode ablations; matching retrieval is selected automatically.
+python run.py locomo --read-mode wiki-only
+python run.py locomo --read-mode raw-only
+
+# Summary-index ablation, including matching retrieval.
+python run.py longmemeval --variant summary
+
+# Local embeddings (optional requirements-local.txt).
+python run.py longmemeval --embed-backend local
+
+# Structured LoCoMo controller budget and prompt analysis.
+python run.py locomo --output-budget-tokens 400 --dump-prompts
+```
+
+`--limit` applies to inference and evaluation, not session indexing or retrieval. Budget, reasoning-budget, and prompt-dump options are available only for structured LoCoMo. Summary readers support `full` mode only. Run `python run.py --help` for all options or see [docs/experiments.md](docs/experiments.md).
+
+The default prediction paths remain:
 
 ```text
 outputs/locomo_structured_t2mem_full_answers.jsonl
 outputs/longmemeval_structured_t2mem_full_answers.jsonl
 ```
 
-Every prediction row contains query metadata, the controller trace, accumulated evidence, and the final `prediction`. Failed queries retain an `error` field and an empty prediction. Structured LoCoMo runs additionally write a `*_token_usage_summary.json`; the other entry points do not currently produce that aggregate file.
-
-### 5. Run ablations
-
-```bash
-# Index-only reading.
-bash scripts/run_t2mem.sh locomo wiki-only
-
-# Raw-only reading: build the matching raw-session retrieval file first.
-EMBED_BACKEND=local bash scripts/run_retrieval.sh locomo raw
-bash scripts/run_t2mem.sh locomo raw-only
-
-# Summary-index ablation: use matching summary retrieval.
-VARIANT=summary bash scripts/run_build_wiki.sh locomo
-VARIANT=summary EMBED_BACKEND=local bash scripts/run_retrieval.sh locomo wiki
-VARIANT=summary bash scripts/run_t2mem.sh locomo full
-
-# Structured LoCoMo controller-output budget ablation.
-bash scripts/run_t2mem.sh locomo wiki-only --output-budget-tokens 400
-```
-
-Structured LongMemEval supports the same three reading modes. Its summary ablation follows the same three summary commands with `longmemeval`. The output-budget and reasoning-budget flags are currently implemented only by the structured LoCoMo entry point. See the [support matrix](docs/experiments.md) before combining settings.
+Rows contain query metadata, controller traces, accumulated evidence, and `prediction`. Structured LoCoMo also writes a `*_token_usage_summary.json`. The separate answer stage and original benchmark prompts are retained.
 
 <a id="evaluation"></a>
 
 ## 📊 Evaluation
 
-With judge credentials configured in `.env`:
+The unified runner evaluates predictions as its final stage. To evaluate separately with credentials loaded from `.env`:
 
 ```bash
-bash scripts/run_eval.sh locomo \
-  outputs/locomo_structured_t2mem_full_answers.jsonl
+python run.py locomo --stage evaluate
 
-bash scripts/run_eval.sh longmemeval \
-  outputs/longmemeval_structured_t2mem_full_answers.jsonl
+python run.py longmemeval --stage evaluate
 ```
 
 Evaluation writes per-query judgments and an accuracy summary under `eval-results/`. The LoCoMo runner converts JSONL predictions into the judge's conversation-keyed input. LoCoMo category 5 is excluded, as in the supplied experiment code. Failed prediction rows are retained as empty responses rather than silently removed.
 
-Judge failures and invalid responses must be checked before interpreting accuracy; the judges' overall accuracy uses valid judgments. This repository does not bundle paper result tables or claim that the offline checks reproduce model accuracy. The evaluation conventions are documented in [docs/experiments.md](docs/experiments.md#evaluation-conventions).
+Judge failures and invalid responses must be checked before interpreting accuracy; the unified runner reports them as stage failures. LoCoMo overall accuracy excludes judge errors, while LongMemEval includes submitted rows in its denominator. This repository does not bundle paper result tables or claim that the offline checks reproduce model accuracy. The evaluation conventions are documented in [docs/experiments.md](docs/experiments.md#evaluation-conventions).
 
 <a id="structure"></a>
 
@@ -193,12 +196,14 @@ Judge failures and invalid responses must be checked before interpreting accurac
 T2Mem/
 ├── README.md
 ├── LICENSE                       MIT license
+├── run.py                        One-command and staged experiment entry point
 ├── .env.example                  Endpoint and model configuration template
 ├── environment.yml               Conda environment
 ├── requirements.txt              API pipeline dependencies
 ├── requirements-local.txt        Optional local embedding dependencies
 ├── scripts/                      Preprocessing, indexing, retrieval, inference, evaluation
 ├── src/
+│   ├── common/                   Pipeline orchestration and embedding backends
 │   ├── locomo/
 │   │   ├── t2mem/                Controller loop and answer entry points
 │   │   ├── prompt/               Indexing, controller, and answer prompts
@@ -219,10 +224,10 @@ The benchmark implementations run as separate CLI processes and retain their dat
 
 ```bash
 python -m unittest discover -s tests -v
-python -m compileall -q src evaluation tests
+python -m compileall -q run.py src evaluation tests
 ```
 
-Tests exercise both benchmarks, structured and summary indexing, retrieval wiring, all structured reading modes, controller actions, budget fallback, prediction conversion, evaluation, and CLI imports. A local mock API and deterministic embedding stub replace external models; no benchmark download or paid API call is required. GitHub Actions runs these checks on Python 3.10 and 3.12.
+Tests exercise automatic dataset discovery, `.env` loading, full and individual stages, all API retrieval representations, optional local embeddings, structured reading modes, controller actions, budget fallback, evaluation, and CLI imports. A local mock API and deterministic embedding stub replace external models; no benchmark download or paid API call is required. GitHub Actions runs these checks on Python 3.10 and 3.12.
 
 ## 🙏 Acknowledgements
 

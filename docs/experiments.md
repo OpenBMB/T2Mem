@@ -1,5 +1,30 @@
 # Experiment settings
 
+## Unified entry point
+
+`python run.py` loads the repository `.env`, discovers datasets directly in `data/` or `data/raw/`, and runs preprocess → index → retrieve → infer → evaluate. Both benchmarks support API embeddings with `requirements.txt` alone.
+
+```bash
+python run.py --check                         # no model calls
+python run.py                                # all discovered benchmarks
+python run.py locomo --skip-eval              # through inference
+python run.py longmemeval --stage preprocess
+python run.py longmemeval --stage index
+python run.py longmemeval --stage retrieve
+python run.py longmemeval --stage infer
+python run.py longmemeval --stage evaluate
+```
+
+Use `--variant` and `--read-mode` consistently across stages. `--data-path` selects a custom raw file; `--predictions` selects an evaluation input. `--data-dir`, `--output-dir`, and `--eval-dir` relocate artifacts. Multiple matching raw files require explicit selection.
+
+CLI options override environment settings; existing environment variables override `.env`. Optional `T2MEM_CONTROLLER_MODEL_NAME` and `T2MEM_ANSWER_MODEL_NAME` select separate models on the same LLM endpoint.
+
+`--retrieval-top-k` / `T2MEM_RETRIEVAL_TOP_K` controls ranked candidates (default 10). `--top-k` / `T2MEM_READ_TOP_K` controls the initial observation (default 5). `--limit` restricts inference and evaluation, not indexing or retrieval. `WORKERS`, `MAX_STEPS`, and `T2MEM_REQUEST_TIMEOUT` configure concurrency, rounds, and request timeout (default 120 seconds).
+
+Preflight checks inputs, configuration, dependencies, and supported settings before model calls. Each stage verifies its output. Empty artifacts, failed rows, and unexpected query counts stop the pipeline with a nonzero status. Logs and partial artifacts remain for diagnosis. Evaluation can be run explicitly on failed predictions; the adapter retains them as empty responses.
+
+Repeated stages replace their generated outputs; prior files are not silently reused. Select an individual stage to continue an experiment. Use `python run.py --help` for all options.
+
 ## Supported configurations
 
 | Entry point | `full` / `wiki-only` / `raw-only` | Output budget | Reasoning budget | Prompt dump | Token summary |
@@ -34,20 +59,15 @@ Wiki and raw candidates are ranked using different representations. Comparing th
 
 ## Embedding backends
 
-| Benchmark and representation | API | Local | Default |
-|---|---|---|---|
-| Structured LoCoMo index | Yes | Yes | API |
-| Raw LoCoMo session | No | Yes | Local |
-| Summary LoCoMo index | No | Yes | Local |
-| Structured LongMemEval index | No | Yes | Local |
-| Raw LongMemEval session | No | Yes | Local |
-| Summary LongMemEval index | No | Yes | Local |
+API and local backends support structured indexes, summary indexes, and raw sessions on both benchmarks. The benchmark-specific text representations and ranking formulas remain unchanged.
 
-Use `python -m pip install -r requirements-local.txt` for the local backend. `EMBED_MODEL_PATH` or `T2MEM_EMBEDDING_MODEL` must identify a sentence-transformers model. API requests use `EMBED_BASE_URL`, `EMBED_MODEL`, and `EMBED_API_KEY`, falling back to their `T2MEM_EMBEDDING_*` equivalents. Unsupported API combinations fail explicitly instead of switching backends.
+`run.py` defaults to API embeddings. Configure the embedding endpoint, served model, and key in `.env`; only `requirements.txt` is needed. Local embeddings require `requirements-local.txt` and a sentence-transformers model directory or ID in `T2MEM_EMBEDDING_MODEL`.
 
-## Runner configuration
+Legacy shell runners preserve their defaults: API for structured LoCoMo wiki retrieval, local otherwise. Set `EMBED_BACKEND` explicitly; the example `.env` selects API.
 
-All runners accept additional Python CLI arguments after their positional arguments. Use the relevant Python entry point's `--help` for its complete flag list. Extra CLI flags override flags supplied earlier by the runner.
+## Legacy shell runner configuration
+
+The original `scripts/*.sh` runners remain available. Export `.env` first with `set -a; source .env; set +a`. All shell runners accept additional Python CLI arguments after their positional arguments. Use the relevant Python entry point's `--help` for its complete flag list. Extra CLI flags override flags supplied earlier by the runner.
 
 | Variable | Default / purpose |
 |---|---|
@@ -65,7 +85,7 @@ All runners accept additional Python CLI arguments after their positional argume
 | `WORKERS` | 16 for indexing, 8 for inference |
 | `TOP_K` | 10 for retrieval, 5 initially observed by inference |
 | `MAX_STEPS` | 5 controller rounds |
-| `EMBED_BACKEND` | As shown in the embedding matrix |
+| `EMBED_BACKEND` | API for structured LoCoMo wiki; local otherwise |
 | `JUDGE_MODEL` | Overrides the judge model; otherwise `qwen3.5-plus` |
 
 `OUT` determines the runner's log path. Prefer environment overrides for paths; if an extra `--output-path` is used, the Python artifact moves but the wrapper log remains at the `OUT` location.
@@ -114,12 +134,12 @@ Preserve model versions, dataset versions, endpoint settings, index artifacts, e
 - LoCoMo category 5 is excluded by its readers and judge, preserving the supplied experiment scope.
 - LoCoMo's adapter now retains failed prediction rows by default as empty responses. The adapter's explicit `--skip-errors` option remains available for reproducing previously filtered evaluations; the evaluation runner does not enable it.
 - LoCoMo overall `accuracy` is computed over successful judge responses. Its category accuracy includes judge-error rows in the denominator. Inspect `total_rows`, `judged_rows`, and `error_rows` before reporting results.
-- LongMemEval preserves its task-specific judge prompts and abstention handling. Its accuracy uses valid judge labels; inspect invalid and failed judgment counts.
+- LongMemEval preserves its task-specific judge prompts and abstention handling. Its accuracy denominator includes submitted rows, including invalid or failed judgments; inspect those counts.
 - Neither evaluator reconstructs missing queries. Supply the full prediction file for a full benchmark evaluation, and report any limits or missing rows.
 - These are the LLM-judge conventions in the supplied experiment code. They should not be presented as an independent implementation of every upstream benchmark metric.
 
 ## Changes from the supplied snapshot
 
-The method is consistently named **T2Mem** in paths, imports, function names, environment variables, and output filenames. Deployment-specific defaults were removed from the summary branches. Runner paths now match index/retrieval filenames, summary entry points receive only supported arguments, and retrieval receives the selected wiki path. The local environment includes NumPy. Unsupported backend combinations fail explicitly. The LoCoMo adapter no longer silently filters failed predictions during evaluation.
+The method is consistently named **T2Mem** in paths, imports, function names, environment variables, and output filenames. Deployment-specific defaults were removed from the summary branches. Runner paths now match index/retrieval filenames, summary entry points receive only supported arguments, and retrieval receives the selected wiki path. The local environment includes NumPy. Both API and local embedding backends now support all benchmark representations. The LoCoMo adapter no longer silently filters failed predictions during evaluation.
 
 The original input formats, active benchmark prompts, controller actions, candidate ranking formulas, evidence accumulation, and answer-generation logic are retained. An original snapshot was backed up locally before organizing this repository.

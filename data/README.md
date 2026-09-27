@@ -8,26 +8,42 @@ Datasets are **not** shipped with this repository. Obtain them from the benchmar
 From the repository root:
 
 ```bash
-mkdir -p data/raw
+mkdir -p data
 curl -fL https://raw.githubusercontent.com/snap-research/locomo/main/data/locomo10.json \
-  -o data/raw/locomo10.json
+  -o data/locomo10.json
 curl -fL https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned/resolve/main/longmemeval_s_cleaned.json \
-  -o data/raw/longmemeval_s_cleaned.json
-bash scripts/preprocess_data.sh locomo
-bash scripts/preprocess_data.sh longmemeval
+  -o data/longmemeval_s_cleaned.json
+python run.py locomo --stage preprocess
+python run.py longmemeval --stage preprocess
 ```
 
 Keep the downloaded version or checksum with your experiment record. The repository's MIT license does not replace the benchmark's data terms.
 
-By default the runner scripts look under `data/` using the layout below; override
-`DATA_ROOT` (or the individual `DATA` / `WIKI_ROOT` / `RETRIEVAL` / `WIKI` variables)
-to point somewhere else.
+Put `locomo10.json` and/or `longmemeval_s_cleaned.json` directly in `data/`. After installing `requirements.txt` and configuring `.env`, run:
+
+```bash
+python run.py --check
+python run.py
+```
+
+The runner discovers available datasets and creates derived files automatically. The existing `data/raw/` location also works. If multiple raw files match one benchmark, select one with `--data-path`. Raw inputs remain unchanged; repeating a stage replaces its generated outputs.
+
+```bash
+python run.py locomo --stage preprocess
+python run.py locomo --stage index
+python run.py locomo --stage retrieve
+python run.py locomo --stage infer
+python run.py locomo --stage evaluate
+```
+
+Use `longmemeval` for the other benchmark. Use `--data-dir` or `DATA_ROOT` to change
+the unified runner's data directory. The legacy shell runners also accept
+individual `DATA` / `WIKI_ROOT` / `RETRIEVAL` / `WIKI` overrides.
 
 ```
 data/
-├── raw/                       raw benchmark files (not distributed)
-│   ├── locomo10.json
-│   └── longmemeval_s_cleaned.json
+├── locomo10.json                  raw LoCoMo data (not distributed)
+├── longmemeval_s_cleaned.json      raw LongMemEval data (not distributed)
 ├── locomo_processed.json
 ├── locomo/
 │   ├── locomo_wiki.jsonl
@@ -54,6 +70,7 @@ A JSON list with one record per conversation:
 |---|---|
 | `sample_id` | conversation id, e.g. `conv-26` |
 | `sessions` | that conversation's sessions |
+| `qa` | questions, reference answers, evidence, and categories |
 
 Each session needs `wiki_id`, `source_session_id`, `date_time` and `transcript_text`.
 
