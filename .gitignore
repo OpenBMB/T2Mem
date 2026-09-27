@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Run artefacts
+outputs/
+eval-results/
+*.log
+
+# Local configuration that may hold credentials
+.env
+.env.*
+!.env.example
+*.local
+
+# Editor, operating-system, test, and build files
+.DS_Store
+.idea/
+.vscode/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.pem
+*.key

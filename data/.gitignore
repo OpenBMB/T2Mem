@@ -1,0 +1,5 @@
+# Datasets and derived files are not distributed with this repository.
+# Keep only this README; everything else under data/ stays local.
+*
+!.gitignore
+!README.md
