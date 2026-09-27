@@ -1,0 +1,3 @@
+# Optional local embedding backend (also installs PyTorch).
+-r requirements.txt
+sentence-transformers>=3,<6

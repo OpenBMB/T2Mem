@@ -1,0 +1,5 @@
+# Indexing, API embeddings, T2Mem inference, and LLM-judge evaluation.
+openai>=1.0,<3
+tqdm>=4.66,<5
+json-repair>=0.30,<1
+numpy>=1.24,<3
