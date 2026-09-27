@@ -11,11 +11,15 @@
 <a href='https://github.com/xiaowu0162/LongMemEval'><img src='https://img.shields.io/badge/Benchmark-LongMemEval-0078D4'></a>
 </h5>
 
-<p align="center">Zijun Wang<sup>1*</sup>, Yifan Ji<sup>1*</sup>, Haidong Xin<sup>1</sup>, Zhenghao Liu<sup>1†</sup>, Yukun Yan<sup>2</sup>, Zulong Chen<sup>3</sup>, Yu Gu<sup>1</sup>, Ge Yu<sup>1</sup>, Maosong Sun<sup>2</sup></p>
-
-<p align="center"><sup>1</sup>Northeastern University, <sup>2</sup>Tsinghua University, <sup>3</sup>Alibaba Group</p>
-
-<p align="center"><sup>*</sup> Equal contribution. <sup>†</sup> Corresponding author.</p>
+<h5 align="center">
+Zijun Wang<sup>1*</sup>, Yifan Ji<sup>1*</sup>, Haidong Xin<sup>1</sup>, Zhenghao Liu<sup>1†</sup>, Yukun Yan<sup>2</sup>,
+<br>
+Zulong Chen<sup>3</sup>, Yu Gu<sup>1</sup>, Ge Yu<sup>1</sup>, Maosong Sun<sup>2</sup>
+<br><br>
+<sup>1</sup> Northeastern University &nbsp;&nbsp; <sup>2</sup> Tsinghua University &nbsp;&nbsp; <sup>3</sup> Alibaba Group
+<br>
+<sub><sup>*</sup> Equal contribution. &nbsp; <sup>†</sup> Corresponding author.</sub>
+</h5>
 </div>
 
 ## 📖 Introduction
