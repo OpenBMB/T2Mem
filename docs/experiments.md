@@ -65,9 +65,9 @@ Use `--variant` and `--read-mode` consistently across stages. `--data-path` sele
 
 CLI options override environment settings; existing environment variables override `.env`. Optional `T2MEM_CONTROLLER_MODEL_NAME` and `T2MEM_ANSWER_MODEL_NAME` select separate models on the same LLM endpoint.
 
-`--retrieval-top-k` / `T2MEM_RETRIEVAL_TOP_K` controls ranked candidates (default 10). `--top-k` / `T2MEM_READ_TOP_K` controls the initial observation (default 5). `--limit` restricts inference and evaluation, not indexing or retrieval. `--temperature` sets the same temperature for index, inference, and judge stages; omitting it uses each stage's default. `WORKERS`, `MAX_STEPS`, and `T2MEM_REQUEST_TIMEOUT` configure concurrency, rounds, and request timeout (default 120 seconds).
+`--retrieval-top-k` / `T2MEM_RETRIEVAL_TOP_K` controls ranked candidates (default 10). `--top-k` / `T2MEM_READ_TOP_K` controls the initial observation (default 5). `--limit` restricts inference and evaluation, not indexing or retrieval. `--temperature` sets the same temperature for index, inference, and judge stages; omitting it uses each stage's default. `WORKERS` overrides concurrency (otherwise index 16, infer 8, judge 4), and `MAX_STEPS` overrides reading rounds. `T2MEM_REQUEST_TIMEOUT` explicitly overrides request timeouts. When omitted, each original Python entry point retains its timeout: 180 seconds for summary indexing, 99999999 seconds for structured LoCoMo inference, and 120 seconds for the other model requests.
 
-Preflight checks inputs, configuration, dependencies, and supported settings before model calls. Each stage verifies its output. Empty artifacts, failed rows, and unexpected query counts stop the pipeline with a nonzero status. Logs and partial artifacts remain for diagnosis. Evaluation can be run explicitly on failed predictions; the adapter retains them as empty responses.
+Preflight checks inputs, configuration, dependencies, and supported settings before model calls. Each stage verifies its output. Empty artifacts, failed rows, and unexpected query counts stop the pipeline with a nonzero status. Logs and partial artifacts remain for diagnosis. Explicit LoCoMo evaluation excludes failed predictions, matching the original experiment runner.
 
 Repeated stages replace their generated outputs; prior files are not silently reused. Select an individual stage to continue an experiment. Use `python run.py --help` for all options.
 
@@ -149,7 +149,7 @@ The `scripts/*.sh` entry points run individual experiment stages. Export `.env` 
 
 `OUT` determines the runner's log path. Prefer environment overrides for paths; if an extra `--output-path` is used, the Python artifact moves but the wrapper log remains at the `OUT` location.
 
-Direct Python entry points also accept `T2MEM_LOCOMO_DATA`, `T2MEM_LME_DATA`, `T2MEM_LOCOMO_RAW`, and `T2MEM_LONGMEMEVAL_RAW`. Use `DATA` / `RAW_DATA` when configuring shell runners. `T2MEM_ROOT` overrides the evaluation config's repository root.
+Direct Python entry points also accept `T2MEM_LOCOMO_DATA`, `T2MEM_LME_DATA`, `T2MEM_LOCOMO_RAW`, and `T2MEM_LONGMEMEVAL_RAW`. LongMemEval preprocessing additionally accepts `T2MEM_LONGMEMEVAL_DATA`, which takes precedence over `T2MEM_LME_DATA` for that stage. Use `DATA` / `RAW_DATA` when configuring shell runners. `T2MEM_ROOT` overrides the evaluation config's repository root.
 
 ## Reading parameters
 
@@ -197,7 +197,7 @@ Preserve model versions, dataset versions, endpoint settings, index artifacts, e
 ## Evaluation conventions
 
 - LoCoMo category 5 is excluded by its readers and judge.
-- The LoCoMo adapter represents failed predictions as empty responses. `--skip-errors` excludes those rows when explicitly requested; the pipeline does not enable this option.
+- The LoCoMo shell and unified runners pass `--skip-errors` to the adapter, preserving the original experiment runner's exclusion of predictions with a nonempty `error`. To include failed predictions as empty responses for a separate evaluation convention, run the adapter directly without `--skip-errors` and then invoke the judge on its output. Report the chosen convention and excluded count with results.
 - LoCoMo overall `accuracy` is computed over successful judge responses. Its category accuracy includes judge-error rows in the denominator. Inspect `total_rows`, `judged_rows`, and `error_rows` before reporting results.
 - LongMemEval uses task-specific judge prompts and abstention handling. Its accuracy denominator includes submitted rows, including invalid or failed judgments; inspect those counts.
 - Neither evaluator reconstructs missing queries. Supply the full prediction file for a full benchmark evaluation, and report any limits or missing rows.

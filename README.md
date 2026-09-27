@@ -187,7 +187,7 @@ The reading-mode experiments select the matching retrieval representation. `raw-
 | `--max-steps` | `5` | Maximum controller rounds |
 | `--temperature` | Stage defaults | Generation temperature; use `0.0` for paper settings |
 | `--answer-max-tokens` | `1024`; summary LoCoMo: `512` | Final answer cap; use `1024` for paper settings |
-| `--workers` | `8` | Concurrent indexing, inference, or judge requests |
+| `--workers` | Index `16`, infer `8`, judge `4` | Concurrent indexing, inference, or judge requests |
 | `--embed-backend` | `api` | API or local embeddings |
 | `--limit` | All questions | Query limit for inference and evaluation |
 
@@ -213,7 +213,7 @@ python run.py locomo --stage evaluate --predictions outputs/my_run.jsonl
 
 Judgments and accuracy summaries are written to `eval-results/`.
 
-- **LoCoMo:** category 5 is excluded. JSONL predictions are converted into conversation-keyed judge inputs. Failed predictions are evaluated as empty responses. Overall accuracy is computed over successful judge responses.
+- **LoCoMo:** category 5 is excluded. JSONL predictions are converted into conversation-keyed judge inputs. As in the original experiment runner, predictions with a nonempty `error` are excluded. Overall accuracy is computed over successful judge responses.
 - **LongMemEval:** evaluation uses task-specific judge prompts and abstention handling. The accuracy denominator includes submitted rows, including invalid or failed judgments.
 
 Inspect error counts and invalid judgments before reporting accuracy. The pipeline treats judge errors and invalid responses as stage failures. Evaluation conventions are detailed in [docs/experiments.md](docs/experiments.md#evaluation-conventions).

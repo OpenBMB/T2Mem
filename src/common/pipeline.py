@@ -375,8 +375,12 @@ class Experiment:
             "--model-name",
             setting(env, "MODEL", "T2MEM_LLM_MODEL_NAME"),
         ]
-        workers = integer_setting(args.workers, env, "WORKERS", default=8)
-        timeout = setting(env, "T2MEM_REQUEST_TIMEOUT", default="120")
+        workers = integer_setting(
+            args.workers,
+            env,
+            "WORKERS",
+            default={"index": 16, "infer": 8, "evaluate": 4}.get(stage, 8),
+        )
         if stage == "preprocess":
             entry = self.source / "wiki/preprocess_data.py"
             flags = ["--data-path", str(self.raw), "--output-path", str(self.processed)]
@@ -398,8 +402,6 @@ class Experiment:
                 str(self.wiki),
                 "--max-workers",
                 str(workers),
-                "--request-timeout",
-                timeout,
                 *llm,
             ]
             output = self.wiki
@@ -443,8 +445,6 @@ class Experiment:
                         "OPENAI_API_KEY",
                         default="EMPTY",
                     ),
-                    "--request-timeout",
-                    timeout,
                 ]
             else:
                 flags += [
@@ -478,8 +478,6 @@ class Experiment:
                 str(self.predictions),
                 "--max-workers",
                 str(workers),
-                "--request-timeout",
-                timeout,
                 "--top-k",
                 str(integer_setting(args.top_k, env, "T2MEM_READ_TOP_K", default=5)),
                 "--max-steps",
@@ -535,8 +533,6 @@ class Experiment:
                 env["JUDGE_MODEL"],
                 "--max-workers",
                 str(workers),
-                "--request-timeout",
-                timeout,
             ]
             if self.dataset == "longmemeval":
                 flags += ["--data-path", str(self.processed)]
@@ -544,6 +540,12 @@ class Experiment:
                 flags += ["--limit", str(args.limit)]
         if args.temperature is not None and stage in ("index", "infer", "evaluate"):
             flags += ["--temperature", str(args.temperature)]
+        timeout = env.get("T2MEM_REQUEST_TIMEOUT")
+        if timeout and (
+            stage in ("index", "infer", "evaluate")
+            or (stage == "retrieve" and self.backend == "api")
+        ):
+            flags += ["--request-timeout", timeout]
         return [sys.executable, str(entry), *flags], output
 
     def run(self) -> None:
@@ -563,6 +565,7 @@ class Experiment:
                     str(self.predictions),
                     "--output-path",
                     str(self.eval_dir / f"judge_{self.predictions.stem}_input.json"),
+                    "--skip-errors",
                 ]
                 execute(adapter, self.env, log_path)
             execute(

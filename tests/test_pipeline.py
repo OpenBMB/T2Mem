@@ -208,7 +208,7 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(len(row['initial_prediction_wiki_context']), 2)
                 self.run_script('run_eval.sh', dataset, pred)
 
-    def test_invalid_action_and_failed_prediction_retention(self):
+    def test_invalid_action_and_original_failed_prediction_filter(self):
         for dataset in ('locomo', 'longmemeval'):
             with self.subTest(dataset=dataset):
                 self.prepare(dataset)
@@ -219,6 +219,7 @@ class PipelineTests(unittest.TestCase):
                 row = json.loads(pred.read_text())
                 self.assertEqual(row['action_fallback_count'], 1)
                 self.assertEqual(row['stop_reason'], 'ANSWER')
+                successful_row = row
                 self.run_script('run_t2mem.sh', dataset, 'full', '--max-retries', '1',
                                 '--controller-model-name', 'test-broken-controller',
                                 '--answer-model-name', 'test-answer', env={'OUT': str(pred)})
@@ -227,9 +228,14 @@ class PipelineTests(unittest.TestCase):
                 self.assertTrue(row['error'])
                 self.assertEqual(row['prediction'], '')
                 if dataset == 'locomo':
+                    pred.write_text(json.dumps(successful_row) + '\n' + json.dumps(row) + '\n')
                     self.run_script('run_eval.sh', dataset, pred)
                     adapter = self.work / 'eval' / f'judge_{pred.stem}_input.json'
-                    self.assertEqual(len(json.loads(adapter.read_text())['test-conv']), 1)
+                    expected = json.loads(adapter.read_text())
+                    self.assertEqual(len(expected['test-conv']), 1)
+                    self.assertEqual(expected['test-conv'][0]['response'], 'Paris')
+                    self.run_entry('locomo', '--stage', 'evaluate', '--predictions', pred)
+                    self.assertEqual(json.loads(adapter.read_text()), expected)
 
     def test_locomo_budget_and_prompt_dump(self):
         self.prepare('locomo')

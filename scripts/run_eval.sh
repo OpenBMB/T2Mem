@@ -17,9 +17,9 @@ STEM="judge_$(basename "${PRED%.jsonl}")"
 JUDGE="$REPO_ROOT/evaluation/${DATASET}_judge.py"
 if [ "$DATASET" = locomo ]; then
   INPUT="$OUT_DIR/${STEM}_input.json"
-  # Keep failed predictions in the denominator, with empty responses.
+  # Preserve the original LoCoMo runner's failed-prediction filtering.
   "$PYTHON" "$REPO_ROOT/evaluation/t2mem_jsonl_to_locomo_judge.py" \
-    --input-path "$PRED" --output-path "$INPUT"
+    --input-path "$PRED" --output-path "$INPUT" --skip-errors
   EXTRA=(--model-name "${JUDGE_MODEL:-qwen3.5-plus}")
 else
   INPUT="$PRED"
