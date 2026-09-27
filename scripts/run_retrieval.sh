@@ -25,17 +25,16 @@ EMBED_BACKEND="${EMBED_BACKEND:-$DEFAULT_BACKEND}"
 EXTRA=()
 case "$EMBED_BACKEND" in
   api)
-    SCRIPT="$SRC_DIR/retrieval/${DATASET}_retrieval_${REPRESENTATION}_api.py"
-    [ -f "$SCRIPT" ] || fail "API embeddings are supported only for structured LoCoMo wiki retrieval; use EMBED_BACKEND=local and requirements-local.txt for this combination"
+    SCRIPT="$SRC_DIR/retrieval/${DATASET}_retrieval_${REPRESENTATION}.py"
     EMBED_BASE_URL="${EMBED_BASE_URL:-${T2MEM_EMBEDDING_BASE_URL:-}}"
     EMBED_API_KEY="${EMBED_API_KEY:-${T2MEM_EMBEDDING_API_KEY:-${OPENAI_API_KEY:-EMPTY}}}"
     EMBED_MODEL="${EMBED_MODEL:-${T2MEM_EMBEDDING_MODEL_NAME:-bge-m3}}"
-    EXTRA+=(--base-url "$EMBED_BASE_URL" --api-key "$EMBED_API_KEY" --model-name "$EMBED_MODEL")
+    EXTRA+=(--backend api --base-url "$EMBED_BASE_URL" --api-key "$EMBED_API_KEY" --model-name "$EMBED_MODEL")
     ;;
   local)
     SCRIPT="$SRC_DIR/retrieval/${DATASET}_retrieval_${REPRESENTATION}.py"
     EMBED_MODEL_PATH="${EMBED_MODEL_PATH:-${T2MEM_EMBEDDING_MODEL:-bge-m3}}"
-    EXTRA+=(--model-path "$EMBED_MODEL_PATH")
+    EXTRA+=(--backend local --model-path "$EMBED_MODEL_PATH")
     ;;
   *) fail "unknown EMBED_BACKEND '$EMBED_BACKEND'; choose api or local" ;;
 esac

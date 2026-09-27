@@ -14,6 +14,10 @@ SRC_ROOT = Path(__file__).resolve().parents[1]
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+if str(SRC_ROOT.parent) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT.parent))
+
+from common.embeddings import add_embedding_arguments, build_embedding_model
 from utils.config import DEFAULT_EMBEDDING_MODEL_PATH, REPO_ROOT, ensure_parent
 
 
@@ -25,20 +29,12 @@ DEFAULT_OUTPUT_PATH = (
 )
 
 
-def load_sentence_transformer():
-    try:
-        from sentence_transformers import SentenceTransformer
-    except ImportError as exc:
-        raise RuntimeError("sentence_transformers is required for summary wiki retrieval.") from exc
-    return SentenceTransformer
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Retrieve LongMemEval summary-only wiki rows.")
     parser.add_argument("--data-path", default=str(REPO_ROOT / "data" / "longmemeval_processed.json"))
     parser.add_argument("--wiki-path", default=str(DEFAULT_WIKI_PATH))
     parser.add_argument("--output-path", default=str(DEFAULT_OUTPUT_PATH))
-    parser.add_argument("--model-path", default=str(DEFAULT_EMBEDDING_MODEL_PATH))
+    add_embedding_arguments(parser, DEFAULT_EMBEDDING_MODEL_PATH)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=16)
     return parser.parse_args()
@@ -75,8 +71,8 @@ def main() -> None:
             if "error" not in row:
                 wiki_rows.append(row)
 
-    print(f"Loading embedding model from {args.model_path} ...")
-    model = load_sentence_transformer()(str(args.model_path))
+    print(f"Embedding backend: {args.backend}")
+    model = build_embedding_model(args)
 
     query_embeddings = model.encode(
         [query_text(record) for record in records],

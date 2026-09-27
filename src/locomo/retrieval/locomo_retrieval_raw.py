@@ -13,20 +13,17 @@ SRC_ROOT = Path(__file__).resolve().parents[1]
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from utils.config import DEFAULT_EMBEDDING_MODEL_PATH, REPO_ROOT, ensure_parent
+if str(SRC_ROOT.parent) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT.parent))
 
-def load_sentence_transformer():
-    try:
-        from sentence_transformers import SentenceTransformer
-    except ImportError as exc:
-        raise RuntimeError("sentence_transformers is required for raw retrieval.") from exc
-    return SentenceTransformer
+from common.embeddings import add_embedding_arguments, build_embedding_model
+from utils.config import DEFAULT_EMBEDDING_MODEL_PATH, REPO_ROOT, ensure_parent
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Retrieve LoCoMo raw sessions from processed data.")
     parser.add_argument("--data-path", default=str(REPO_ROOT / "data" / "locomo_processed.json"))
     parser.add_argument("--output-path", default=str(REPO_ROOT / "data" / "locomo" / "locomo_retrieval_raw.jsonl"))
-    parser.add_argument("--model-path", default=str(DEFAULT_EMBEDDING_MODEL_PATH))
+    add_embedding_arguments(parser, DEFAULT_EMBEDDING_MODEL_PATH)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=32)
     return parser.parse_args()
@@ -65,8 +62,8 @@ def main() -> None:
     with data_path.open("r", encoding="utf-8") as file_obj:
         samples = json.load(file_obj)
 
-    print(f"Loading embedding model from {args.model_path} ...")
-    model = load_sentence_transformer()(str(args.model_path))
+    print(f"Embedding backend: {args.backend}")
+    model = build_embedding_model(args)
 
     with output_path.open("w", encoding="utf-8") as file_obj:
         for sample in tqdm(samples, desc="samples", unit="sample"):

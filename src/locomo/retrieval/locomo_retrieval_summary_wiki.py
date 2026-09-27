@@ -14,6 +14,10 @@ SRC_ROOT = Path(__file__).resolve().parents[1]
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+if str(SRC_ROOT.parent) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT.parent))
+
+from common.embeddings import add_embedding_arguments, build_embedding_model
 from utils.config import DEFAULT_EMBEDDING_MODEL_PATH, REPO_ROOT, ensure_parent
 
 
@@ -33,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--wiki-path", default=str(DEFAULT_WIKI_PATH))
     parser.add_argument("--output-path", default=str(DEFAULT_OUTPUT_PATH))
-    parser.add_argument("--model-path", default=str(DEFAULT_EMBEDDING_MODEL_PATH))
+    add_embedding_arguments(parser, DEFAULT_EMBEDDING_MODEL_PATH)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=16)
     return parser.parse_args()
@@ -66,13 +70,8 @@ def main() -> None:
             if "error" not in row:
                 wiki_rows.append(row)
 
-    try:
-        from sentence_transformers import SentenceTransformer
-    except ImportError as exc:
-        raise RuntimeError("sentence-transformers is required") from exc
-
-    print(f"Loading embedding model: {args.model_path}")
-    model = SentenceTransformer(str(args.model_path))
+    print(f"Embedding backend: {args.backend}")
+    model = build_embedding_model(args)
 
     sample_wikis: dict[str, list[dict]] = {}
     for row in wiki_rows:
