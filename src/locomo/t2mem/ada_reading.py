@@ -18,6 +18,7 @@ from prompt.t2mem_prompt import (
     ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_NO_RAW,
     ADAPTIVE_READING_SYSTEM_PROMPT_NO_LOOK_RAW_ONLY,
     QA_ANSWER_LOCOMO_ADA_PROMPT_TEMPLATE,
+    QA_ANSWER_PERSONAMEM_ADA_PROMPT_TEMPLATE,
 )
 from utils.llm_utils import (
     DEFAULT_DISABLE_THINKING_EXTRA_BODY,
@@ -496,6 +497,8 @@ def compose_current_information(
 
 def answer_prompt_pair(dataset: str) -> tuple[str | None, str]:
     """Pick the adaptive-answer prompt for the current dataset."""
+    if dataset == "personamem":
+        return None, QA_ANSWER_PERSONAMEM_ADA_PROMPT_TEMPLATE
     return None, QA_ANSWER_LOCOMO_ADA_PROMPT_TEMPLATE
 
 

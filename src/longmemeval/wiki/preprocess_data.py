@@ -31,8 +31,8 @@ def _default_data_path(dataset: str) -> Path:
 
 
 def _default_output_path(dataset: str) -> Path:
-    return Path(os.getenv("T2MEM_LME_DATA",
-                                 str(REPO_ROOT / "data" / "longmemeval_processed.json"))).expanduser()
+    return Path(os.getenv("T2MEM_LONGMEMEVAL_DATA", os.getenv("T2MEM_LME_DATA",
+                                 str(REPO_ROOT / "data" / "longmemeval_processed.json")))).expanduser()
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:

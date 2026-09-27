@@ -48,7 +48,7 @@ OUTPUT_PATHS = {
 def parse_args() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(description="Run t2mem adaptive reading and answer generation.")
-    parser.add_argument("--dataset", choices=["locomo"], default="locomo")
+    parser.add_argument("--dataset", choices=["locomo", "personamem"], default="locomo")
     parser.add_argument("--data-path", default=None)
     parser.add_argument("--retrieval-path", default=None)
     parser.add_argument("--wiki-path", default=None)
